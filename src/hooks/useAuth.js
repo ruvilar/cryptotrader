@@ -6,13 +6,6 @@ export function useAuth() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Obtener sesión actual al cargar
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-      setLoading(false)
-    })
-
-    // Escuchar cambios de sesión (login / logout)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setUser(session?.user ?? null)
@@ -20,23 +13,24 @@ export function useAuth() {
       }
     )
 
+    supabase.auth.getSession().then(({ data }) => {
+      if (data?.session) setUser(data.session.user)
+      setLoading(false)
+    })
+
     return () => subscription.unsubscribe()
   }, [])
 
-  // Login con Google — redirige y vuelve a la app automáticamente
   async function loginConGoogle() {
-    const { error } = await supabase.auth.signInWithOAuth({
+    await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: {
-        redirectTo: import.meta.env.VITE_APP_URL + '/dashboard'
-      }
+      options: { redirectTo: 'http://localhost:3000/dashboard' }
     })
-    if (error) console.error('Error login Google:', error.message)
   }
 
   async function logout() {
-    const { error } = await supabase.auth.signOut()
-    if (error) console.error('Error logout:', error.message)
+    await supabase.auth.signOut()
+    setUser(null)
   }
 
   return { user, loading, loginConGoogle, logout }

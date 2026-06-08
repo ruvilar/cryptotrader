@@ -63,7 +63,7 @@ export default function AddAsset({ userId, onActivoAgregado }) {
           width: '100%', padding: '0.8rem',
           background: 'transparent',
           border: '1px dashed #2a2a2a', borderRadius: '12px',
-          color: '#444', cursor: 'pointer',
+          color: '#f7f6f3', fontWeight: 'bold', cursor: 'pointer',
           fontSize: '0.9rem', transition: 'all 0.2s'
         }}
       >

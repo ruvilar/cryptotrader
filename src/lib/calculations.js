@@ -165,7 +165,7 @@ export function calcularResumenRendimiento(operaciones) {
 // Verifican que los datos sean correctos antes
 // de calcular para evitar errores silenciosos
 // =============================================
-export function validarVenta({ capitalTotal, porcentaje, precioActual, precioVenta }) {
+export function validarVenta({ capitalTotal, porcentaje, precioCompra, precioVenta }) {
   const errores = []
 
   if (!capitalTotal || capitalTotal <= 0)
@@ -174,14 +174,14 @@ export function validarVenta({ capitalTotal, porcentaje, precioActual, precioVen
   if (!porcentaje || porcentaje <= 0 || porcentaje > 100)
     errores.push('El porcentaje debe estar entre 1 y 100')
 
-  if (!precioActual || precioActual <= 0)
-    errores.push('El precio actual debe ser mayor a 0')
+  if (!precioCompra || precioCompra <= 0)
+    errores.push('El precio de compra debe ser mayor a 0')
 
   if (!precioVenta || precioVenta <= 0)
     errores.push('El precio de venta debe ser mayor a 0')
 
-  if (precioVenta && precioActual && precioVenta <= precioActual)
-    errores.push('El precio de venta debe ser mayor al precio actual')
+  if (precioVenta && precioCompra && precioVenta <= precioCompra)
+    errores.push('El precio de venta debe ser mayor al precio de compra')
 
   return errores
 }

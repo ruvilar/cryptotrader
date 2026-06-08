@@ -20,13 +20,13 @@ export default function Navbar() {
             alt="avatar"
             style={{ width: 32, height: 32, borderRadius: '50%', border: '2px solid #00e5a0' }}
           />
-          <span style={{ color: '#aaa', fontSize: '0.85rem' }}>
+          <span style={{ color: '#aaa', fontSize: '0.85rem', fontStyle: 'italic' }}>
             {user.user_metadata?.full_name || user.email}
           </span>
           <button onClick={logout} style={{
             background: 'transparent', border: '1px solid #333',
-            color: '#666', padding: '0.3rem 0.8rem', borderRadius: '6px',
-            cursor: 'pointer', fontSize: '0.8rem'
+            color: '#f2f528', padding: '0.3rem 0.8rem', borderRadius: '6px',
+            cursor: 'pointer', fontSize: '0.8rem', fontWeight: 700
           }}>
             Salir
           </button>

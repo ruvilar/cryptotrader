@@ -39,7 +39,7 @@ export function useTrading(activo, userId) {
     const erroresVal = validarVenta({
       capitalTotal: activo.capital_actual,
       porcentaje,
-      precioActual,
+      precioCompra: precioActual,  // ← renombrado
       precioVenta
     })
     if (erroresVal.length) return null
@@ -78,7 +78,7 @@ export function useTrading(activo, userId) {
     const erroresVal = validarVenta({
       capitalTotal: activo.capital_actual,
       porcentaje,
-      precioActual,
+      precioCompra: precioActual,
       precioVenta
     })
     if (erroresVal.length) { setErrores(erroresVal); return null }

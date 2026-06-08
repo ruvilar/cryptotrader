@@ -85,12 +85,12 @@ export default function History({ operaciones, onEliminar, loading }) {
           <div style={{ color: '#ccc', fontSize: '0.85rem', fontWeight: 600 }}>
             ${op.precio_operacion?.toFixed(2)}
           </div>
-          <div style={{ color: '#444', fontSize: '0.7rem' }}>{fecha}</div>
+          <div style={{ color: 'rgb(253, 233, 191)', fontSize: '0.7rem' }}>{fecha}</div>
         </div>
   
         <div>
           <div style={{ color: '#888', fontSize: '0.8rem' }}>${op.monto_usdt?.toFixed(2)} USDT</div>
-          <div style={{ color: '#444', fontSize: '0.7rem' }}>{op.tokens} tokens</div>
+          <div style={{ color: 'rgb(253, 233, 191)', fontSize: '0.7rem' }}>{op.tokens} tokens</div>
         </div>
   
         <div>
@@ -104,7 +104,7 @@ export default function History({ operaciones, onEliminar, loading }) {
               ahorro +${op.ahorro?.toFixed(2)}
             </div>
           )}
-          <div style={{ color: '#444', fontSize: '0.7rem' }}>
+          <div style={{ color: 'rgb(253, 233, 191)', fontSize: '0.7rem' }}>
             cap. ${op.capital_despues?.toFixed(2)}
           </div>
         </div>

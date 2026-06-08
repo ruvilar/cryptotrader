@@ -6,6 +6,7 @@ export default function OperationForm({ activo, userId, onOperacionCompletada })
   const [modo, setModo]               = useState('venta')   // 'venta' | 'recompra'
   const [porcentaje, setPorcentaje]   = useState(activo?.porcentaje_operacion || 25)
   const [precioVenta, setPrecioVenta] = useState('')
+  const [precioCompra, setPrecioCompra] = useState('')
   const [precioRecompra, setPrecioRecompra] = useState('')
   const [preview, setPreview]         = useState(null)
 
@@ -22,11 +23,11 @@ export default function OperationForm({ activo, userId, onOperacionCompletada })
   // Actualizar previsualización en tiempo real
   useEffect(() => {
     if (!activo) return
-    if (modo === 'venta' && precioVenta && precioActual) {
+    if (modo === 'venta' && precioVenta && precioCompra) {
       const prev = previsualizarVenta({
         porcentaje,
-        precioActual,
-        precioVenta: parseFloat(precioVenta)
+        precioActual: parseFloat(precioCompra),
+        precioVenta:  parseFloat(precioVenta)
       })
       setPreview(prev)
     } else if (modo === 'recompra' && precioRecompra) {
@@ -48,6 +49,7 @@ export default function OperationForm({ activo, userId, onOperacionCompletada })
       res = await ejecutarVenta({
         porcentaje,
         precioActual,
+        precioActual: parseFloat(precioCompra),
         precioVenta: parseFloat(precioVenta)
       })
     } else {
@@ -127,19 +129,38 @@ export default function OperationForm({ activo, userId, onOperacionCompletada })
       {/* Campo de precio */}
       {modo === 'venta' ? (
         <div style={{ marginBottom: '1rem' }}>
+          {/* Precio de compra — fijo, lo ingresa el usuario */}
           <label style={{ color: '#555', fontSize: '0.75rem', display: 'block', marginBottom: '0.4rem' }}>
-            Precio de venta (USDT)
+            Precio de compra (USDT)
             {precioActual && (
-              <span style={{ color: '#00e5a0', marginLeft: '0.5rem' }}>
-                Actual: ${precioActual.toFixed(2)}
+              <span style={{ color: '#666', marginLeft: '0.5rem', fontSize: '0.7rem' }}>
+                · en vivo: ${precioActual.toFixed(2)}
               </span>
             )}
           </label>
           <input
             type="number"
+            value={precioCompra}
+            onChange={e => setPrecioCompra(e.target.value)}
+            placeholder="Ej: 2000 (precio al que compraste)"
+            style={{
+              width: '100%', padding: '0.7rem 1rem',
+              background: '#0a0a0a', border: '1px solid #2a2a2a',
+              borderRadius: '8px', color: '#fff', fontSize: '1rem',
+              outline: 'none', boxSizing: 'border-box',
+              marginBottom: '0.8rem'
+            }}
+          />
+
+          {/* Precio de venta — objetivo del usuario */}
+          <label style={{ color: '#555', fontSize: '0.75rem', display: 'block', marginBottom: '0.4rem' }}>
+            Precio de venta objetivo (USDT)
+          </label>
+          <input
+            type="number"
             value={precioVenta}
             onChange={e => setPrecioVenta(e.target.value)}
-            placeholder="Ej: 2500"
+            placeholder="Ej: 2500 (tu objetivo de venta)"
             style={{
               width: '100%', padding: '0.7rem 1rem',
               background: '#0a0a0a', border: '1px solid #2a2a2a',

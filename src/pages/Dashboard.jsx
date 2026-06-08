@@ -6,6 +6,8 @@ import OperationForm from '../components/OperationForm'
 import History from '../components/History'
 import AddAsset from '../components/AddAsset'
 import { calcularResumenRendimiento } from '../lib/calculations'
+import MarketContext from '../components/MarketContext'
+import { useBinancePrice } from '../hooks/useBinancePrice'
 
 export default function Dashboard() {
   const { user } = useAuth()
@@ -15,6 +17,8 @@ export default function Dashboard() {
   const [loadingActivos, setLoadingActivos] = useState(true)
   const [loadingOps, setLoadingOps]       = useState(false)
   const [vista, setVista]                 = useState('operar') // 'operar' | 'historial'
+
+  const { precio: precioActual } = useBinancePrice(activoSeleccionado?.simbolo)
 
   // Cargar activos del usuario
   const cargarActivos = useCallback(async () => {
@@ -113,7 +117,7 @@ export default function Dashboard() {
             label="Ganancia total"
             valor={`${gananciaTotal >= 0 ? '+' : ''}$${gananciaTotal.toFixed(2)}`}
             positivo={gananciaTotal >= 0}
-            sub={`${((gananciaTotal / capitalInicial) * 100).toFixed(1)}% del capital`}
+            sub={`${capitalInicial > 0 ? ((gananciaTotal / capitalInicial) * 100).toFixed(1) : '0.0'}% del capital`}
           />
           <TarjetaResumen
             label="Operaciones"
@@ -133,17 +137,17 @@ export default function Dashboard() {
 
           {/* Sidebar: lista de activos */}
           <div>
-            <div style={{ color: '#555', fontSize: '0.75rem', marginBottom: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <div style={{ color: '#fff', fontWeight: 'bold', fontSize: '0.75rem', marginBottom: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Mis activos
             </div>
 
             {activos.length === 0 ? (
               <div style={{
-                background: '#111', border: '1px solid #1e1e1e',
+                background: '#111111', border: '1px solid #1e1e1e',
                 borderRadius: '14px', padding: '2rem', textAlign: 'center',
-                color: '#444', marginBottom: '0.8rem'
+                color: 'rgb(253, 233, 191)', marginBottom: '0.8rem'
               }}>
-                No tenés activos aún
+                No tenés activos todavía. Agregá uno para empezar a operar.
               </div>
             ) : (
               activos.map(activo => (
@@ -152,6 +156,10 @@ export default function Dashboard() {
                   activo={activo}
                   seleccionado={activoSeleccionado?.id === activo.id}
                   onSeleccionar={seleccionarActivo}
+                  onEliminado={() => {
+                    setActivo(null)
+                    cargarActivos()
+                  }}
                 />
               ))
             )}
@@ -169,8 +177,8 @@ export default function Dashboard() {
                 background: '#111', border: '1px solid #1e1e1e',
                 borderRadius: '14px', padding: '3rem', textAlign: 'center'
               }}>
-                <div style={{ color: '#333', fontSize: '2rem', marginBottom: '0.5rem' }}>←</div>
-                <div style={{ color: '#444' }}>Seleccioná un activo para operar</div>
+                <div style={{ color: '#fff', fontSize: '2rem', marginBottom: '0.5rem' }}>←</div>
+                <div style={{ color: '#999', fontWeight: 'bold', }}>Selecciona un activo para operar</div>
               </div>
             ) : (
               <>
@@ -199,14 +207,24 @@ export default function Dashboard() {
 
                 {/* Panel operar */}
                 {vista === 'operar' && (
-                  <OperationForm
-                    activo={activoSeleccionado}
-                    userId={user.id}
-                    onOperacionCompletada={() => {
-                      cargarActivos()
-                      cargarOperaciones()
-                    }}
-                  />
+                  <>
+                    <OperationForm
+                      activo={activoSeleccionado}
+                      userId={user.id}
+                      onOperacionCompletada={() => {
+                        cargarActivos()
+                        cargarOperaciones()
+                      }}
+                    />
+                    <MarketContext
+                      simbolo={activoSeleccionado.simbolo}
+                      precioActual={precioActual}
+                      precioEntrada={activoSeleccionado.precio_entrada || 2000}
+                      intervaloUsd={activoSeleccionado.intervalo_precio || 500}
+                      capitalTotal={activoSeleccionado.capital_actual}
+                      porcentaje={activoSeleccionado.porcentaje_operacion}
+                    />
+                  </>
                 )}
 
                 {/* Panel historial */}
@@ -232,7 +250,7 @@ function TarjetaResumen({ label, valor, sub, positivo }) {
       background: '#111', border: '1px solid #1e1e1e',
       borderRadius: '14px', padding: '1.2rem'
     }}>
-      <div style={{ color: '#444', fontSize: '0.7rem', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+      <div style={{ color: '#fde9bf', fontSize: '0.7rem', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
         {label}
       </div>
       <div style={{
@@ -241,7 +259,7 @@ function TarjetaResumen({ label, valor, sub, positivo }) {
       }}>
         {valor}
       </div>
-      {sub && <div style={{ color: '#333', fontSize: '0.72rem' }}>{sub}</div>}
+      {sub && <div style={{ color: '#fde9bf', fontSize: '0.80rem' }}>{sub}</div>}
     </div>
   )
 }

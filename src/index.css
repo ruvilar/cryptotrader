@@ -77,3 +77,9 @@ button:active:not(:disabled) {
     font-size: 14px;
   }
 }
+
+/* Oculta botón de React Inspector */
+label.toggle, 
+.handle {
+  display: none;
+}
