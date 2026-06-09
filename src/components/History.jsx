@@ -70,7 +70,7 @@ export default function History({ operaciones, onEliminar, loading }) {
         padding: '0.7rem 1rem',
         borderLeft: `3px solid ${esVenta ? '#00e5a0' : '#4d79ff'}`
       }}>
-        <span style={{ color: '#444', fontSize: '0.75rem' }}>#{numero}</span>
+        <span style={{ color: '#f0b429', fontWeight: 600, fontSize: '0.80rem' }}>#{numero}</span>
   
         <span style={{
           background: esVenta ? '#00e5a011' : '#4d79ff11',
@@ -89,7 +89,7 @@ export default function History({ operaciones, onEliminar, loading }) {
         </div>
   
         <div>
-          <div style={{ color: '#888', fontSize: '0.8rem' }}>${op.monto_usdt?.toFixed(2)} USDT</div>
+          <div style={{ color: '#aaa', fontSize: '0.8rem' }}>${op.monto_usdt?.toFixed(2)} USDT</div>
           <div style={{ color: 'rgb(253, 233, 191)', fontSize: '0.7rem' }}>{op.tokens} tokens</div>
         </div>
   

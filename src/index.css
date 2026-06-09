@@ -71,15 +71,21 @@ button:active:not(:disabled) {
   transform: scale(0.98);
 }
 
+/* Oculta botón de React Inspector */
+label.toggle, 
+.handle {
+  display: none;
+}
+
+/* Animación de carga */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
 /* Responsive básico */
 @media (max-width: 768px) {
   body {
     font-size: 14px;
   }
-}
-
-/* Oculta botón de React Inspector */
-label.toggle, 
-.handle {
-  display: none;
 }

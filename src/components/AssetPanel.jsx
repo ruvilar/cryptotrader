@@ -84,7 +84,7 @@ export default function AssetPanel({ activo, onSeleccionar, seleccionado, onElim
           <div style={{ color: '#fff', fontWeight: 700, fontSize: '1rem' }}>
             {activo.nombre}
           </div>
-          <div style={{ color: '#555', fontSize: '0.75rem' }}>
+          <div style={{ color: '#aaa', fontSize: '0.75rem', fontStyle: 'italic' }}>
             {activo.simbolo.toUpperCase()}
           </div>
         </div>
@@ -92,7 +92,7 @@ export default function AssetPanel({ activo, onSeleccionar, seleccionado, onElim
           <div style={{ color: gananciaPositiva ? '#00e5a0' : '#ff4d4d', fontWeight: 700 }}>
             {gananciaPositiva ? '+' : ''}${ganancia.toFixed(2)}
           </div>
-          <div style={{ color: '#444', fontSize: '0.7rem' }}>
+          <div style={{ color: '#aaa', fontSize: '0.7rem' }}>
             {((ganancia / activo.capital_inicial) * 100).toFixed(1)}% total
           </div>
         </div>
@@ -117,11 +117,11 @@ export default function AssetPanel({ activo, onSeleccionar, seleccionado, onElim
 function Metrica({ label, valor, highlight, dimmed }) {
   return (
     <div style={{ background: '#0a0a0a', borderRadius: '8px', padding: '0.5rem 0.7rem' }}>
-      <div style={{ color: '#444', fontSize: '0.65rem', marginBottom: '0.2rem' }}>{label}</div>
+      <div style={{ color: '#fde9bf', fontSize: '0.65rem', marginBottom: '0.2rem' }}>{label}</div>
       <div style={{ color: highlight ? '#00e5a0' : '#ccc', fontWeight: 600, fontSize: '0.9rem' }}>
         {valor}
       </div>
-      {dimmed && <div style={{ color: '#444', fontSize: '0.65rem' }}>{dimmed}</div>}
+      {dimmed && <div style={{ color: '#fde9bf', fontSize: '0.65rem' }}>{dimmed}</div>}
     </div>
   )
 }

@@ -91,7 +91,7 @@ export default function OperationForm({ activo, userId, onOperacionCompletada })
             style={{
               flex: 1, padding: '0.6rem',
               background: modo === m ? (m === 'venta' ? '#00e5a0' : '#4d79ff') : '#1a1a1a',
-              color: modo === m ? '#000' : '#555',
+              color: modo === m ? '#000' : '#ccc',
               border: 'none', borderRadius: '8px',
               fontWeight: 600, cursor: 'pointer',
               textTransform: 'capitalize', transition: 'all 0.2s'
@@ -104,7 +104,7 @@ export default function OperationForm({ activo, userId, onOperacionCompletada })
 
       {/* Porcentaje */}
       <div style={{ marginBottom: '1rem' }}>
-        <label style={{ color: '#555', fontSize: '0.75rem', display: 'block', marginBottom: '0.4rem' }}>
+        <label style={{ color: '#ccc', fontSize: '0.75rem', display: 'block', marginBottom: '0.4rem' }}>
           % a operar (recomendado: {porcentajeRecomendado}%)
         </label>
         <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
@@ -116,7 +116,7 @@ export default function OperationForm({ activo, userId, onOperacionCompletada })
                 padding: '0.3rem 0.7rem', borderRadius: '6px',
                 background: porcentaje === p ? '#1a2e1a' : '#1a1a1a',
                 border: `1px solid ${porcentaje === p ? '#00e5a0' : '#2a2a2a'}`,
-                color: porcentaje === p ? '#00e5a0' : '#555',
+                color: porcentaje === p ? '#00e5a0' : '#ccc',
                 cursor: 'pointer', fontSize: '0.8rem'
               }}
             >
@@ -130,10 +130,10 @@ export default function OperationForm({ activo, userId, onOperacionCompletada })
       {modo === 'venta' ? (
         <div style={{ marginBottom: '1rem' }}>
           {/* Precio de compra — fijo, lo ingresa el usuario */}
-          <label style={{ color: '#555', fontSize: '0.75rem', display: 'block', marginBottom: '0.4rem' }}>
+          <label style={{ color: '#f0b429', fontSize: '0.87rem', display: 'block', marginBottom: '0.4rem' }}>
             Precio de compra (USDT)
             {precioActual && (
-              <span style={{ color: '#666', marginLeft: '0.5rem', fontSize: '0.7rem' }}>
+              <span style={{ color: '#999', marginLeft: '0.5rem', fontSize: '0.8rem' }}>
                 · en vivo: ${precioActual.toFixed(2)}
               </span>
             )}
@@ -142,29 +142,29 @@ export default function OperationForm({ activo, userId, onOperacionCompletada })
             type="number"
             value={precioCompra}
             onChange={e => setPrecioCompra(e.target.value)}
-            placeholder="Ej: 2000 (precio al que compraste)"
+            placeholder="Ej: 2000"
             style={{
               width: '100%', padding: '0.7rem 1rem',
               background: '#0a0a0a', border: '1px solid #2a2a2a',
-              borderRadius: '8px', color: '#fff', fontSize: '1rem',
+              borderRadius: '8px', color: '#fff', fontSize: '0.85rem',
               outline: 'none', boxSizing: 'border-box',
               marginBottom: '0.8rem'
             }}
           />
 
           {/* Precio de venta — objetivo del usuario */}
-          <label style={{ color: '#555', fontSize: '0.75rem', display: 'block', marginBottom: '0.4rem' }}>
+          <label style={{ color: '#f0b429', fontSize: '0.87rem', display: 'block', marginBottom: '0.4rem' }}>
             Precio de venta objetivo (USDT)
           </label>
           <input
             type="number"
             value={precioVenta}
             onChange={e => setPrecioVenta(e.target.value)}
-            placeholder="Ej: 2500 (tu objetivo de venta)"
+            placeholder="Ej: 2500"
             style={{
               width: '100%', padding: '0.7rem 1rem',
               background: '#0a0a0a', border: '1px solid #2a2a2a',
-              borderRadius: '8px', color: '#fff', fontSize: '1rem',
+              borderRadius: '8px', color: '#fff', fontSize: '0.85rem',
               outline: 'none', boxSizing: 'border-box'
             }}
           />

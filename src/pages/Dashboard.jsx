@@ -8,6 +8,8 @@ import AddAsset from '../components/AddAsset'
 import { calcularResumenRendimiento } from '../lib/calculations'
 import MarketContext from '../components/MarketContext'
 import { useBinancePrice } from '../hooks/useBinancePrice'
+import { useAlerts }  from '../hooks/useAlerts'
+import AlertPanel     from '../components/AlertPanel'
 
 export default function Dashboard() {
   const { user } = useAuth()
@@ -19,6 +21,13 @@ export default function Dashboard() {
   const [vista, setVista]                 = useState('operar') // 'operar' | 'historial'
 
   const { precio: precioActual } = useBinancePrice(activoSeleccionado?.simbolo)
+  const preciosPorSimbolo = activos.reduce((acc, a) => {
+    if (activoSeleccionado?.simbolo === a.simbolo && precioActual) {
+      acc[a.simbolo] = precioActual
+    }
+    return acc
+  }, {})
+  const { alertas, disparadas, agregarAlerta, descartarAlerta, eliminarAlerta } = useAlerts(user?.id, preciosPorSimbolo)
 
   // Cargar activos del usuario
   const cargarActivos = useCallback(async () => {
@@ -185,7 +194,7 @@ export default function Dashboard() {
                 {/* Tabs */}
                 <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.2rem' }}>
                   {[
-                    { id: 'operar',    label: 'Operar' },
+                    { id: 'operar',    label: 'Panel de Operaciones' },
                     { id: 'historial', label: `Historial (${operaciones.length})` }
                   ].map(tab => (
                     <button
@@ -195,7 +204,7 @@ export default function Dashboard() {
                         padding: '0.5rem 1.2rem',
                         background: vista === tab.id ? '#1a2e1a' : 'transparent',
                         border: `1px solid ${vista === tab.id ? '#00e5a0' : '#2a2a2a'}`,
-                        color: vista === tab.id ? '#00e5a0' : '#555',
+                        color: vista === tab.id ? '#00e5a0' : '#aaa',
                         borderRadius: '8px', cursor: 'pointer',
                         fontSize: '0.85rem', fontWeight: 600
                       }}
@@ -207,24 +216,38 @@ export default function Dashboard() {
 
                 {/* Panel operar */}
                 {vista === 'operar' && (
-                  <>
-                    <OperationForm
-                      activo={activoSeleccionado}
-                      userId={user.id}
-                      onOperacionCompletada={() => {
-                        cargarActivos()
-                        cargarOperaciones()
-                      }}
-                    />
-                    <MarketContext
-                      simbolo={activoSeleccionado.simbolo}
-                      precioActual={precioActual}
-                      precioEntrada={activoSeleccionado.precio_entrada || 2000}
-                      intervaloUsd={activoSeleccionado.intervalo_precio || 500}
-                      capitalTotal={activoSeleccionado.capital_actual}
-                      porcentaje={activoSeleccionado.porcentaje_operacion}
-                    />
-                  </>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', alignItems: 'start' }}>
+                    <div>
+                      <OperationForm
+                        activo={activoSeleccionado}
+                        userId={user.id}
+                        onOperacionCompletada={() => {
+                          cargarActivos()
+                          cargarOperaciones()
+                        }}
+                      />
+                    </div>
+
+                    <div>
+                      <MarketContext
+                        simbolo={activoSeleccionado.simbolo}
+                        precioActual={precioActual}
+                        precioEntrada={activoSeleccionado.precio_entrada || 2000}
+                        intervaloUsd={activoSeleccionado.intervalo_precio || 500}
+                        capitalTotal={activoSeleccionado.capital_actual}
+                        porcentaje={activoSeleccionado.porcentaje_operacion}
+                      />
+                      <AlertPanel
+                        simbolos={activos.map(a => a.simbolo)}
+                        userId={user?.id}
+                        alertas={alertas}
+                        disparadas={disparadas}
+                        agregarAlerta={agregarAlerta}
+                        descartarAlerta={descartarAlerta}
+                        eliminarAlerta={eliminarAlerta}
+                      />
+                    </div>
+                  </div>
                 )}
 
                 {/* Panel historial */}
@@ -250,7 +273,7 @@ function TarjetaResumen({ label, valor, sub, positivo }) {
       background: '#111', border: '1px solid #1e1e1e',
       borderRadius: '14px', padding: '1.2rem'
     }}>
-      <div style={{ color: '#fde9bf', fontSize: '0.7rem', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+      <div style={{ color: '#fde9bf', fontWeight: 'bold', fontSize: '0.9rem', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
         {label}
       </div>
       <div style={{
@@ -259,7 +282,7 @@ function TarjetaResumen({ label, valor, sub, positivo }) {
       }}>
         {valor}
       </div>
-      {sub && <div style={{ color: '#fde9bf', fontSize: '0.80rem' }}>{sub}</div>}
+      {sub && <div style={{ color: '#fde9bf', fontSize: '0.80rem', fontStyle: 'italic' }}>{sub}</div>}
     </div>
   )
 }

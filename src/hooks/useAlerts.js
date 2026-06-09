@@ -60,6 +60,11 @@ export function useAlerts(userId, preciosPorSimbolo) {
     setDisparadas(prev => prev.filter(a => a.id !== id))
   }
 
+  const eliminarAlerta = async (id) => {
+    await supabase.from('alertas').update({ activa: false }).eq('id', id)
+    setAlertas(prev => prev.filter(a => a.id !== id))
+  }
+
   useEffect(() => {
     cargarAlertas()
   }, [cargarAlertas])
@@ -69,5 +74,5 @@ export function useAlerts(userId, preciosPorSimbolo) {
     return () => clearInterval(intervalRef.current)
   }, [chequearAlertas])
 
-  return { alertas, disparadas, agregarAlerta, descartarAlerta, cargarAlertas }
+  return { alertas, disparadas, agregarAlerta, descartarAlerta, eliminarAlerta, cargarAlertas }
 }

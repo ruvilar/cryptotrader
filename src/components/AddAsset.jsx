@@ -14,6 +14,7 @@ export default function AddAsset({ userId, onActivoAgregado }) {
   const [simbolo, setSimbolo]           = useState('ETHUSDT')
   const [capitalInicial, setCapital]    = useState('')
   const [porcentaje, setPorcentaje]     = useState(25)
+  const [precioEntrada, setPrecioEntrada] = useState('')
   const [guardando, setGuardando]       = useState(false)
   const [error, setError]               = useState(null)
 
@@ -38,7 +39,9 @@ export default function AddAsset({ userId, onActivoAgregado }) {
         capital_inicial:      capital,
         capital_actual:       capital,
         porcentaje_operacion: porcentaje,
-        activo:               true
+        activo:               true,
+        intervalo_precio:     500,
+        precio_entrada:       parseFloat(precioEntrada) || 0
       }])
 
     if (err) {
@@ -146,6 +149,25 @@ export default function AddAsset({ userId, onActivoAgregado }) {
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Precio de entrada */}    
+      <div style={{ marginBottom: '1.2rem' }}>
+        <label style={{ color: '#555', fontSize: '0.75rem', display: 'block', marginBottom: '0.4rem' }}>
+          Precio de entrada (al que compraste)
+        </label>
+        <input
+          type="number"
+          value={precioEntrada}
+          onChange={e => setPrecioEntrada(e.target.value)}
+          placeholder="Ej: 2000"
+          style={{
+            width: '100%', padding: '0.7rem 1rem',
+            background: '#0a0a0a', border: '1px solid #2a2a2a',
+            borderRadius: '8px', color: '#fff', fontSize: '1rem',
+            outline: 'none', boxSizing: 'border-box'
+          }}
+        />
       </div>
 
       {error && (

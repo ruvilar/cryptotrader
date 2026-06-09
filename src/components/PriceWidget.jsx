@@ -15,7 +15,7 @@ export default function PriceWidget({ simbolo }) {
       justifyContent: 'space-between', gap: '1rem'
     }}>
       <div>
-        <div style={{ color: '#555', fontSize: '0.75rem', marginBottom: '0.2rem' }}>
+        <div style={{ color: '#f0b429', fontSize: '0.75rem', marginBottom: '0.2rem' }}>
           Precio en vivo · {simbolo?.toUpperCase()}
         </div>
         {loading && !precio && (
@@ -30,7 +30,7 @@ export default function PriceWidget({ simbolo }) {
           </div>
         )}
         {hora && (
-          <div style={{ color: '#444', fontSize: '0.7rem', marginTop: '0.2rem' }}>
+          <div style={{ color: '#999', fontSize: '0.7rem', marginTop: '0.2rem' }}>
             Actualizado {hora}
           </div>
         )}
@@ -38,7 +38,7 @@ export default function PriceWidget({ simbolo }) {
 
       <button onClick={refrescar} disabled={loading} style={{
         background: 'transparent', border: '1px solid #333',
-        color: loading ? '#333' : '#555', padding: '0.4rem 0.8rem',
+        color: loading ? '#fff' : '#f0b429', padding: '0.4rem 0.8rem',
         borderRadius: '8px', cursor: loading ? 'default' : 'pointer',
         fontSize: '0.8rem', transition: 'all 0.2s'
       }}>

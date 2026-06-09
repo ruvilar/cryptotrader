@@ -55,6 +55,7 @@ export default function MarketContext({ simbolo, precioActual, precioEntrada, in
   const [tendencia,   setTendencia]   = useState(null) // 'sube' | 'baja' | 'lateral'
   const [loading,     setLoading]     = useState(true)
   const [error,       setError]       = useState(null)
+  const [actualizando, setActualizando] = useState(false)
   const intervalRef = useRef(null)
 
   const fetchDatos = useCallback(async () => {
@@ -117,6 +118,12 @@ export default function MarketContext({ simbolo, precioActual, precioEntrada, in
     }
   }, [simbolo])
 
+  const handleRefresh = async () => {
+    setActualizando(true)
+    await fetchDatos()
+    setActualizando(false)
+  }
+
   useEffect(() => {
     setLoading(true)
     fetchDatos()
@@ -131,10 +138,10 @@ export default function MarketContext({ simbolo, precioActual, precioEntrada, in
   const montoOperar    = capitalTotal && porcentaje ? (capitalTotal * porcentaje / 100).toFixed(2) : null
 
   // Distancia al próximo objetivo (si hay precio actual e intervalo)
-  const precioObjetivoVenta    = precioActual && intervaloUsd ? precioActual + intervaloUsd : null
-  const precioObjetivoRecompra = precioActual && intervaloUsd ? precioActual - intervaloUsd : null
-  const distanciaVenta         = precioObjetivoVenta    ? (precioObjetivoVenta    - precioActual) : null
-  const distanciaRecompra      = precioObjetivoRecompra ? (precioActual - precioObjetivoRecompra) : null
+  const precioObjetivoVenta    = precioEntrada && intervaloUsd ? precioEntrada + intervaloUsd : null
+  const precioObjetivoRecompra = precioEntrada && intervaloUsd ? precioEntrada - intervaloUsd : null
+  const distanciaVenta         = precioObjetivoVenta && precioActual ? precioObjetivoVenta - precioActual : null
+  const distanciaRecompra      = precioObjetivoRecompra && precioActual ? precioActual - precioObjetivoRecompra : null
 
   if (loading) {
     return (
@@ -160,12 +167,15 @@ export default function MarketContext({ simbolo, precioActual, precioEntrada, in
           📊 Contexto de mercado · {simbolo?.toUpperCase()}
         </div>
         <button
-          onClick={fetchDatos}
-          style={{
-            background: 'transparent', border: 'none',
-            color: '#444', cursor: 'pointer', fontSize: '0.85rem'
-          }}
-          title="Actualizar"
+        onClick={handleRefresh}
+        style={{
+        background: 'transparent', border: 'none',
+        color: actualizando ? '#00e5a0' : '#f0b429',
+        cursor: 'pointer', fontSize: '0.85rem',
+        transition: 'color 0.3s',
+        animation: actualizando ? 'spin 0.6s linear' : 'none'
+        }}
+        title="Actualizar"
         >↻</button>
       </div>
 
@@ -198,7 +208,7 @@ export default function MarketContext({ simbolo, precioActual, precioEntrada, in
 
       {/* RSI */}
       <div style={{ marginBottom: '0.8rem' }}>
-        <div style={{ color: '#444', fontSize: '0.65rem', marginBottom: '0.2rem' }}>RSI (14 períodos · 1h)</div>
+        <div style={{ color: '#ccc', fontSize: '0.65rem', marginBottom: '0.2rem' }}>RSI (14 períodos · 1h)</div>
         <div style={{ color: rsiInfo.color, fontSize: '0.85rem', fontWeight: 600 }}>
           {rsiInfo.texto}
         </div>
@@ -219,10 +229,10 @@ export default function MarketContext({ simbolo, precioActual, precioEntrada, in
       {/* Volatilidad 7d */}
       {volat7d && (
         <div style={{ marginBottom: '0.8rem' }}>
-          <div style={{ color: '#444', fontSize: '0.65rem', marginBottom: '0.2rem' }}>
+          <div style={{ color: '#ccc', fontSize: '0.65rem', marginBottom: '0.2rem' }}>
             Volatilidad promedio — últimos 7 días
           </div>
-          <div style={{ color: '#888', fontSize: '0.85rem' }}>
+          <div style={{ color: '#f0b429', fontSize: '0.85rem' }}>
             ≈ ${volat7d.toLocaleString()} USD/día de movimiento
           </div>
         </div>
@@ -235,14 +245,14 @@ export default function MarketContext({ simbolo, precioActual, precioEntrada, in
           marginBottom: '0.8rem',
           borderLeft: `3px solid ${semaforo.color}`
         }}>
-          <div style={{ color: '#444', fontSize: '0.65rem', marginBottom: '0.2rem' }}>
+          <div style={{ color: '#aaa', fontSize: '0.85rem', marginBottom: '0.2rem' }}>
             Tu intervalo de ${intervaloUsd.toLocaleString()} USD
           </div>
           <div style={{ color: semaforo.color, fontWeight: 600, fontSize: '0.85rem' }}>
             {semaforo.emoji} {semaforo.texto}
           </div>
           {volat7d && (
-            <div style={{ color: '#444', fontSize: '0.7rem', marginTop: '0.2rem' }}>
+            <div style={{ color: '#aaa', fontSize: '0.75rem', marginTop: '0.2rem', fontStyle: 'italic' }}>
               Intervalo sugerido según volatilidad 7d: ≈ ${Math.round(volat7d * 0.4).toLocaleString()} — ${Math.round(volat7d * 0.7).toLocaleString()} USD
             </div>
           )}
@@ -262,21 +272,21 @@ export default function MarketContext({ simbolo, precioActual, precioEntrada, in
         border: `1px solid ${enGanancia ? '#00e5a033' : cerca ? '#f0b42933' : '#ff4d4d33'}`,
         borderRadius: '10px', padding: '0.8rem 1rem', marginBottom: '0.8rem'
         }}>
-        <div style={{ color: '#444', fontSize: '0.65rem', marginBottom: '0.4rem' }}>
+        <div style={{ color: '#aaa', fontSize: '0.85rem', marginBottom: '0.4rem' }}>
             Estado respecto a tu entrada
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem', marginBottom: '0.5rem' }}>
             <div>
-            <div style={{ color: '#444', fontSize: '0.62rem' }}>Tu entrada</div>
+            <div style={{ color: '#f0b429', fontSize: '0.7rem' }}>Tu entrada</div>
             <div style={{ color: '#ccc', fontWeight: 600, fontSize: '0.85rem' }}>${precioEntrada.toLocaleString()}</div>
             </div>
             <div>
-            <div style={{ color: '#444', fontSize: '0.62rem' }}>Precio actual</div>
+            <div style={{ color: '#f0b429', fontSize: '0.7rem' }}>Precio actual</div>
             <div style={{ color: '#ccc', fontWeight: 600, fontSize: '0.85rem' }}>${precioActual.toFixed(0).toLocaleString()}</div>
             </div>
             <div>
-            <div style={{ color: '#444', fontSize: '0.62rem' }}>Diferencia</div>
+            <div style={{ color: '#f0b429', fontSize: '0.7rem' }}>Diferencia</div>
             <div style={{ color: enGanancia ? '#00e5a0' : '#ff4d4d', fontWeight: 700, fontSize: '0.85rem' }}>
                 {enGanancia ? '+' : ''}{diff.toFixed(0)} ({diffPct}%)
             </div>
@@ -288,13 +298,13 @@ export default function MarketContext({ simbolo, precioActual, precioEntrada, in
             background: enGanancia ? '#00e5a011' : cerca ? '#f0b42911' : '#ff4d4d11',
             borderRadius: '6px', padding: '0.5rem 0.7rem',
             color: enGanancia ? '#00e5a0' : cerca ? '#f0b429' : '#ff8080',
-            fontSize: '0.78rem', lineHeight: 1.4
+            fontSize: '0.80rem', lineHeight: 1.4, fontStyle: 'italic'
         }}>
             {enGanancia
             ? `✅ Estás en ganancia latente. Podés ejecutar ventas con beneficio real.`
             : cerca
             ? `⚠️ Cerca de tu entrada. Esperá que supere $${precioEntrada.toLocaleString()} antes de vender.`
-            : `🔴 Precio por debajo de tu entrada ($${Math.abs(diff).toFixed(0)} abajo). No conviene operar hasta que ETH recupere $${precioEntrada.toLocaleString()}.`
+            : `🔴 Precio por debajo de tu entrada ($${Math.abs(diff).toFixed(0)} abajo). No conviene operar hasta que ETH se recupere a $${precioEntrada.toLocaleString()}.`
             }
         </div>
         </div>
@@ -305,25 +315,25 @@ export default function MarketContext({ simbolo, precioActual, precioEntrada, in
       {precioActual && intervaloUsd && (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem', marginBottom: '0.8rem' }}>
           <div style={{ background: '#0a0a0a', borderRadius: '8px', padding: '0.6rem 0.8rem' }}>
-            <div style={{ color: '#444', fontSize: '0.65rem' }}>Próxima venta</div>
+            <div style={{ color: '#f0b429', fontSize: '0.75rem' }}>Próxima venta</div>
             <div style={{ color: '#00e5a0', fontWeight: 600, fontSize: '0.9rem' }}>
               ${precioObjetivoVenta?.toFixed(0).toLocaleString()}
             </div>
-            <div style={{ color: '#444', fontSize: '0.7rem' }}>faltan ${distanciaVenta?.toFixed(0)}</div>
+            <div style={{ color: '#f0b429', fontSize: '0.7rem' }}>Faltan ${distanciaVenta?.toFixed(0)}</div>
           </div>
           <div style={{ background: '#0a0a0a', borderRadius: '8px', padding: '0.6rem 0.8rem' }}>
-            <div style={{ color: '#444', fontSize: '0.65rem' }}>Próxima recompra</div>
+            <div style={{ color: '#f0b429', fontSize: '0.75rem' }}>Próxima recompra</div>
             <div style={{ color: '#4d79ff', fontWeight: 600, fontSize: '0.9rem' }}>
               ${precioObjetivoRecompra?.toFixed(0).toLocaleString()}
             </div>
-            <div style={{ color: '#444', fontSize: '0.7rem' }}>faltan ${distanciaRecompra?.toFixed(0)}</div>
+            <div style={{ color: '#f0b429', fontSize: '0.7rem' }}>Faltan ${distanciaRecompra?.toFixed(0)}</div>
           </div>
         </div>
       )}
 
       {/* Monto a operar */}
       {montoOperar && (
-        <div style={{ color: '#444', fontSize: '0.75rem', borderTop: '1px solid #1a1a1a', paddingTop: '0.7rem' }}>
+        <div style={{ color: '#f0b429', fontSize: '0.75rem', borderTop: '1px solid #1a1a1a', paddingTop: '0.7rem' }}>
           Con tu capital actual operás ≈{' '}
           <span style={{ color: '#ccc', fontWeight: 600 }}>${montoOperar} USDT</span>
           {' '}({porcentaje}%)
@@ -336,9 +346,9 @@ export default function MarketContext({ simbolo, precioActual, precioEntrada, in
 function Celda({ label, valor, sub, color }) {
   return (
     <div style={{ background: '#0a0a0a', borderRadius: '8px', padding: '0.5rem 0.7rem' }}>
-      <div style={{ color: '#444', fontSize: '0.65rem', marginBottom: '0.2rem' }}>{label}</div>
+      <div style={{ color: '#f0b429', fontSize: '0.65rem', marginBottom: '0.2rem' }}>{label}</div>
       <div style={{ color: color || '#ccc', fontWeight: 600, fontSize: '0.85rem' }}>{valor}</div>
-      {sub && <div style={{ color: '#444', fontSize: '0.65rem' }}>{sub}</div>}
+      {sub && <div style={{ color: '#f0b429', fontSize: '0.65rem' }}>{sub}</div>}
     </div>
   )
 }
@@ -347,6 +357,5 @@ const estiloCard = {
   background: '#111',
   border: '1px solid #1e1e1e',
   borderRadius: '14px',
-  padding: '1.2rem',
-  marginTop: '1rem'
+  padding: '1.2rem'
 }
