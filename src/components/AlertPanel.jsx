@@ -60,11 +60,11 @@ export default function AlertPanel({ simbolos, userId, alertas, disparadas, agre
         <div style={{ marginBottom: '0.8rem' }}>
           <div style={{ color: '#aaa', fontSize: '0.85rem', marginBottom: '0.4rem' }}>Activas</div>
             {alertas.map(a => (
-                <div key={a.id} style={{
+              <div key={a.id} style={{
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                padding: '0.4rem 0', borderBottom: '1px solid #1a1a1a',
-                fontSize: '0.78rem', color: '#888'
-                }}>
+                padding: '0.4rem 0', borderBottom: '2px solid #fff',
+                fontSize: '0.78rem', color: '#888', fontWeight: 700
+              }}>
                 <span>{a.simbolo} {a.condicion === 'supera' ? '↑' : '↓'} ${a.precio_objetivo.toLocaleString()}</span>
                 <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
                     <span style={{ color: '#eaddc0' }}>{a.mensaje}</span>
@@ -77,7 +77,7 @@ export default function AlertPanel({ simbolos, userId, alertas, disparadas, agre
                     }}
                     >✕</button>
                 </div>
-                </div>
+              </div>
             ))}
         </div>
       )}

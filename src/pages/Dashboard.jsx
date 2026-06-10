@@ -21,12 +21,9 @@ export default function Dashboard() {
   const [vista, setVista]                 = useState('operar') // 'operar' | 'historial'
 
   const { precio: precioActual } = useBinancePrice(activoSeleccionado?.simbolo)
-  const preciosPorSimbolo = activos.reduce((acc, a) => {
-    if (activoSeleccionado?.simbolo === a.simbolo && precioActual) {
-      acc[a.simbolo] = precioActual
-    }
-    return acc
-  }, {})
+  const preciosPorSimbolo = precioActual && activoSeleccionado
+    ? { [activoSeleccionado.simbolo]: precioActual }
+    : {}
   const { alertas, disparadas, agregarAlerta, descartarAlerta, eliminarAlerta } = useAlerts(user?.id, preciosPorSimbolo)
 
   // Cargar activos del usuario
