@@ -6,6 +6,9 @@ import {
   calcularMontoOperacion,
   calcularIntervaloEnUsd,
   calcularGananciaAcumulada,
+  calcularSaldoTokens,
+  calcularReservaUsd,
+  calcularValorActivoActual,
   validarVenta,
   validarRecompra
 } from '../lib/calculations'
@@ -33,19 +36,37 @@ export function useTrading(activo, userId) {
     ? calcularPorcentajeRecomendado(activo.capital_actual)
     : 25
 
+  const capitalVentaActual = activo && operaciones?.length
+    ? calcularValorActivoActual({
+        tokens: calcularSaldoTokens(operaciones),
+        precioActual: activo?.precio_entrada || 0
+      }) || activo.capital_actual
+    : activo?.capital_actual || 0
+
+  const capitalRecompraActual = operaciones?.length
+    ? calcularReservaUsd(operaciones)
+    : activo?.capital_actual || 0
+
   // Previsualización de venta (sin guardar)
   function previsualizarVenta({ porcentaje, precioActual, precioVenta }) {
     if (!activo || !precioActual || !precioVenta) return null
+    const baseVenta = precioActual && operaciones.length
+      ? calcularValorActivoActual({
+          tokens: calcularSaldoTokens(operaciones),
+          precioActual
+        })
+      : activo.capital_actual
+
     const erroresVal = validarVenta({
-      capitalTotal: activo.capital_actual,
+      capitalTotal: baseVenta,
       porcentaje,
-      precioCompra: precioActual,  // ← renombrado
+      precioCompra: precioActual,
       precioVenta
     })
     if (erroresVal.length) return null
 
     return calcularVenta({
-      capitalTotal: activo.capital_actual,
+      capitalTotal: baseVenta,
       porcentaje,
       precioActual,
       precioVenta
@@ -55,15 +76,19 @@ export function useTrading(activo, userId) {
   // Previsualización de recompra (sin guardar)
   function previsualizarRecompra({ porcentaje, precioRecompra }) {
     if (!activo || !precioRecompra) return null
+    const baseRecompra = operaciones.length
+      ? calcularReservaUsd(operaciones)
+      : activo.capital_actual
+
     const erroresVal = validarRecompra({
-      capitalTotal: activo.capital_actual,
+      capitalTotal: baseRecompra,
       porcentaje,
       precioRecompra
     })
     if (erroresVal.length) return null
 
     return calcularRecompra({
-      capitalTotal:        activo.capital_actual,
+      capitalTotal:        baseRecompra,
       porcentaje,
       precioVentaAnterior: ultimaVenta?.precio_operacion || null,
       precioRecompra

@@ -10,6 +10,9 @@ export default function AssetPanel({ activo, onSeleccionar, seleccionado, onElim
   const pctRecomendado = calcularPorcentajeRecomendado(activo.capital_actual)
   const ganancia = activo.capital_actual - activo.capital_inicial
   const gananciaPositiva = ganancia >= 0
+  const cantidadActivo = activo.precio_entrada > 0
+    ? (activo.capital_actual / activo.precio_entrada)
+    : 0
 
   async function handleEliminar(e) {
     e.stopPropagation()
@@ -106,9 +109,12 @@ export default function AssetPanel({ activo, onSeleccionar, seleccionado, onElim
         display: 'grid', gridTemplateColumns: '1fr 1fr 1fr',
         gap: '0.6rem', marginTop: '0.8rem'
       }}>
+        <Metrica label="Cantidad" valor={`${cantidadActivo.toFixed(6)} ${activo.simbolo.replace('USDT', '')}`} />
         <Metrica label="Capital inicial" valor={`$${activo.capital_inicial.toFixed(2)}`} />
         <Metrica label="Capital actual" valor={`$${activo.capital_actual.toFixed(2)}`} highlight />
-        <Metrica label="% a operar" valor={`${activo.porcentaje_operacion}%`} dimmed={`rec. ${pctRecomendado}%`} />
+      </div>
+      <div style={{ marginTop: '0.6rem', color: '#f0b429', fontSize: '0.7rem' }}>
+        % a operar {activo.porcentaje_operacion}% · recomendado {pctRecomendado}%
       </div>
     </div>
   )

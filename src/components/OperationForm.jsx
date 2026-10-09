@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTrading } from '../hooks/useTrading'
 import { useBinancePrice } from '../hooks/useBinancePrice'
+import { calcularEstadoEstrategia } from '../lib/calculations'
 
 export default function OperationForm({ activo, userId, onOperacionCompletada }) {
   const [modo, setModo]               = useState('venta')   // 'venta' | 'recompra'
@@ -14,13 +15,20 @@ export default function OperationForm({ activo, userId, onOperacionCompletada })
 
   const {
     procesando, errores, resultado,
-    porcentajeRecomendado, ultimaVenta,
+    porcentajeRecomendado, ultimaVenta, operaciones,
     previsualizarVenta, previsualizarRecompra,
     ejecutarVenta, ejecutarRecompra,
     limpiarResultado, limpiarErrores
   } = useTrading(activo, userId)
 
-  // Actualizar previsualización en tiempo real
+  const estadoActual = calcularEstadoEstrategia({
+    operaciones,
+    precioActual: precioActual || 0,
+    capitalActual: activo?.capital_actual || 0,
+    porcentaje
+  })
+
+  // Previsualización actualizada en tiempo real
   useEffect(() => {
     if (!activo) return
     if (modo === 'venta' && precioVenta && precioCompra) {
@@ -48,8 +56,9 @@ export default function OperationForm({ activo, userId, onOperacionCompletada })
     if (modo === 'venta') {
       res = await ejecutarVenta({
         porcentaje,
-        precioActual,
-        precioActual: parseFloat(precioCompra),
+        precioActual: ultimaVenta
+          ? parseFloat(ultimaVenta.precio_operacion)
+          : parseFloat(precioCompra),
         precioVenta: parseFloat(precioVenta)
       })
     } else {
@@ -126,33 +135,67 @@ export default function OperationForm({ activo, userId, onOperacionCompletada })
         </div>
       </div>
 
-      {/* Campo de precio */}
-      {modo === 'venta' ? (
-        <div style={{ marginBottom: '1rem' }}>
-          {/* Precio de compra — fijo, lo ingresa el usuario */}
-          <label style={{ color: '#f0b429', fontSize: '0.87rem', display: 'block', marginBottom: '0.4rem' }}>
-            Precio de compra (USDT)
-            {precioActual && (
-              <span style={{ color: '#999', marginLeft: '0.5rem', fontSize: '0.8rem' }}>
-                · en vivo: ${precioActual.toFixed(2)}
-              </span>
-            )}
-          </label>
-          <input
-            type="number"
-            value={precioCompra}
-            onChange={e => setPrecioCompra(e.target.value)}
-            placeholder="Ej: 2000"
-            style={{
-              width: '100%', padding: '0.7rem 1rem',
-              background: '#0a0a0a', border: '1px solid #2a2a2a',
-              borderRadius: '8px', color: '#fff', fontSize: '0.85rem',
-              outline: 'none', boxSizing: 'border-box',
-              marginBottom: '0.8rem'
-            }}
-          />
+      {precioActual && (
+        <div style={{
+          background: '#0a0a0a', border: '1px solid #1f1f1f',
+          borderRadius: '10px', padding: '0.9rem', marginBottom: '1rem'
+        }}>
+          <div style={{ color: '#f0b429', fontSize: '0.75rem', marginBottom: '0.6rem' }}>
+            Estado actual de la estrategia
+          </div>
 
-          {/* Precio de venta — objetivo del usuario */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem' }}>
+            <MiniCard
+              label="Valor activo"
+              valor={`$${estadoActual.valorActivo.toFixed(2)}`}
+              sub={`${estadoActual.saldoTokens.toFixed(6)} ETH`}
+            />
+            <MiniCard
+              label="USD disponible"
+              valor={`$${estadoActual.reservaUsd.toFixed(2)}`}
+              sub="para recompra"
+            />
+            <MiniCard
+              label="Vender"
+              valor={`$${estadoActual.montoVenta.toFixed(2)}`}
+              sub={`${estadoActual.tokensVenta.toFixed(6)} ETH`}
+            />
+            <MiniCard
+              label="Recomprar"
+              valor={`$${estadoActual.montoRecompra.toFixed(2)}`}
+              sub={`${estadoActual.tokensCompra.toFixed(6)} ETH`}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Campo de precio */}
+      {modo === 'venta' && (
+        <div style={{ marginBottom: '1rem' }}>
+          {!ultimaVenta && (
+            <>
+              <label style={{ color: '#f0b429', fontSize: '0.87rem', display: 'block', marginBottom: '0.4rem' }}>
+                Precio de compra (USDT)
+                {precioActual && (
+                  <span style={{ color: '#999', marginLeft: '0.5rem', fontSize: '0.8rem' }}>
+                    · en vivo: ${precioActual.toFixed(2)}
+                  </span>
+                )}
+              </label>
+              <input
+                type="number"
+                value={precioCompra}
+                onChange={e => setPrecioCompra(e.target.value)}
+                placeholder="Ej: 2000"
+                style={{
+                  width: '100%', padding: '0.7rem 1rem',
+                  background: '#0a0a0a', border: '1px solid #2a2a2a',
+                  borderRadius: '8px', color: '#fff', fontSize: '0.85rem',
+                  outline: 'none', boxSizing: 'border-box', marginBottom: '0.8rem'
+                }}
+              />
+            </>
+          )}
           <label style={{ color: '#f0b429', fontSize: '0.87rem', display: 'block', marginBottom: '0.4rem' }}>
             Precio de venta objetivo (USDT)
           </label>
@@ -169,7 +212,9 @@ export default function OperationForm({ activo, userId, onOperacionCompletada })
             }}
           />
         </div>
-      ) : (
+      )}
+
+      {modo === 'recompra' && (
         <div style={{ marginBottom: '1rem' }}>
           <label style={{ color: '#555', fontSize: '0.75rem', display: 'block', marginBottom: '0.4rem' }}>
             Precio de recompra (USDT)
@@ -191,31 +236,6 @@ export default function OperationForm({ activo, userId, onOperacionCompletada })
               outline: 'none', boxSizing: 'border-box'
             }}
           />
-        </div>
-      )}
-
-      {/* Preview del cálculo */}
-      {preview && (
-        <div style={{
-          background: '#0a0a0a', border: `1px solid ${modo === 'venta' ? '#00e5a0' : '#4d79ff'}22`,
-          borderRadius: '10px', padding: '1rem', marginBottom: '1rem'
-        }}>
-          <div style={{ color: '#555', fontSize: '0.7rem', marginBottom: '0.6rem' }}>
-            Vista previa
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
-            <PreviewItem label="Monto USDT" valor={`$${preview.montoOperacion}`} />
-            <PreviewItem label="Tokens" valor={preview.tokens} />
-            {modo === 'venta' && (
-              <>
-                <PreviewItem label="Ganancia" valor={`+$${preview.ganancia}`} positivo />
-                <PreviewItem label="Capital nuevo" valor={`$${preview.capitalNuevo}`} />
-              </>
-            )}
-            {modo === 'recompra' && preview.ahorro > 0 && (
-              <PreviewItem label="Ahorro recompra" valor={`+$${preview.ahorro}`} positivo />
-            )}
-          </div>
         </div>
       )}
 
@@ -248,6 +268,16 @@ export default function OperationForm({ activo, userId, onOperacionCompletada })
       >
         {procesando ? 'Procesando...' : modo === 'venta' ? '↑ Ejecutar Venta' : '↓ Ejecutar Recompra'}
       </button>
+    </div>
+  )
+}
+
+function MiniCard({ label, valor, sub }) {
+  return (
+    <div style={{ background: '#111', borderRadius: '8px', padding: '0.6rem 0.7rem', border: '1px solid #1f1f1f' }}>
+      <div style={{ color: '#f0b429', fontSize: '0.65rem', marginBottom: '0.2rem' }}>{label}</div>
+      <div style={{ color: '#fff', fontSize: '0.85rem', fontWeight: 700 }}>{valor}</div>
+      {sub && <div style={{ color: '#aaa', fontSize: '0.65rem', marginTop: '0.1rem' }}>{sub}</div>}
     </div>
   )
 }

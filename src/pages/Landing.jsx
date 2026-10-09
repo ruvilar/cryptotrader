@@ -34,7 +34,7 @@ export default function Landing() {
           Tu capital, tu estrategia
         </h2>
         <p style={{ color: '#444', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '2rem' }}>
-          Registrá tus operaciones de ETH y BTC,
+          Registrá tus operaciones de criptomonedas,
           calculá ganancias automáticamente y
           seguí tu capital en tiempo real.
         </p>

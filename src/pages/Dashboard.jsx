@@ -233,6 +233,8 @@ export default function Dashboard() {
                         intervaloUsd={activoSeleccionado.intervalo_precio || 500}
                         capitalTotal={activoSeleccionado.capital_actual}
                         porcentaje={activoSeleccionado.porcentaje_operacion}
+                        operaciones={operaciones}
+                        plataforma="Hapi"
                       />
                       <AlertPanel
                         simbolos={activos.map(a => a.simbolo)}

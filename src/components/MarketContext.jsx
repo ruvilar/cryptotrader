@@ -3,6 +3,12 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 const BINANCE_TICKER  = 'https://api.binance.com/api/v3/ticker/24hr'
 const BINANCE_KLINES  = 'https://api.binance.com/api/v3/klines'
 const COINGECKO_CHART = 'https://api.coingecko.com/api/v3/coins'
+const COMISION_POR_DEFECTO = 1
+const COMISIONES_PLATAFORMA = {
+  Hapi: 1,
+  Binance: 0.1,
+  Kraken: 0.16
+}
 
 // Mapa símbolo Binance → id CoinGecko
 const COINGECKO_IDS = {
@@ -48,7 +54,7 @@ function textoRSI(rsi) {
   return             { texto: `${rsi} — zona neutral`,                          color: '#888'    }
 }
 
-export default function MarketContext({ simbolo, precioActual, precioEntrada, intervaloUsd, capitalTotal, porcentaje }) {
+export default function MarketContext({ simbolo, precioActual, precioEntrada, intervaloUsd, capitalTotal, porcentaje, operaciones = [], plataforma = 'Hapi' }) {
   const [ticker,      setTicker]      = useState(null)
   const [rsi,         setRsi]         = useState(null)
   const [volat7d,     setVolat7d]     = useState(null)
@@ -57,6 +63,17 @@ export default function MarketContext({ simbolo, precioActual, precioEntrada, in
   const [error,       setError]       = useState(null)
   const [actualizando, setActualizando] = useState(false)
   const intervalRef = useRef(null)
+
+  const ultimaOperacion = operaciones.length
+    ? [...operaciones].sort((a, b) => new Date(b.creado_en) - new Date(a.creado_en))[0]
+    : null
+
+  const paso = intervaloUsd || 500
+  const referenciaEscalon = ultimaOperacion?.precio_operacion || precioEntrada || 2000
+  const precioObjetivoVenta    = referenciaEscalon + paso
+  const precioObjetivoRecompra = referenciaEscalon - paso
+  const distanciaVenta         = precioObjetivoVenta && precioActual ? precioObjetivoVenta - precioActual : null
+  const distanciaRecompra      = precioObjetivoRecompra && precioActual ? precioActual - precioObjetivoRecompra : null
 
   const fetchDatos = useCallback(async () => {
     if (!simbolo) return
@@ -136,12 +153,10 @@ export default function MarketContext({ simbolo, precioActual, precioEntrada, in
   const semaforo       = ticker ? evaluarIntervalo(ticker.rangoDia, intervaloUsd) : null
   const rsiInfo        = textoRSI(rsi)
   const montoOperar    = capitalTotal && porcentaje ? (capitalTotal * porcentaje / 100).toFixed(2) : null
-
-  // Distancia al próximo objetivo (si hay precio actual e intervalo)
-  const precioObjetivoVenta    = precioEntrada && intervaloUsd ? precioEntrada + intervaloUsd : null
-  const precioObjetivoRecompra = precioEntrada && intervaloUsd ? precioEntrada - intervaloUsd : null
-  const distanciaVenta         = precioObjetivoVenta && precioActual ? precioObjetivoVenta - precioActual : null
-  const distanciaRecompra      = precioObjetivoRecompra && precioActual ? precioActual - precioObjetivoRecompra : null
+  const comisionActual = COMISIONES_PLATAFORMA[plataforma] || COMISION_POR_DEFECTO
+  const montoNetoEstimado = capitalTotal && porcentaje
+    ? (capitalTotal * porcentaje / 100) * (1 - (comisionActual / 100))
+    : null
 
   if (loading) {
     return (
@@ -259,56 +274,54 @@ export default function MarketContext({ simbolo, precioActual, precioEntrada, in
         </div>
       )}
 
-    {/* Alerta de precio de entrada */}
-    {precioEntrada && precioActual && (() => {
-    const diff       = precioActual - precioEntrada
-    const diffPct    = ((diff / precioEntrada) * 100).toFixed(1)
-    const enGanancia = diff >= 0
-    const cerca      = Math.abs(diff) <= precioEntrada * 0.05 // dentro del 5%
+    {/* Estado del escalón actual */}
+    {precioActual && (() => {
+      const referenciaLabel = ultimaOperacion ? `$${ultimaOperacion.precio_operacion?.toFixed(0).toLocaleString()}` : `$${precioEntrada?.toLocaleString()}`
+      const diffVenta = precioActual - precioObjetivoVenta
+      const diffRecompra = precioActual - precioObjetivoRecompra
+      const proximoVenta = diffVenta >= 0
+      const proximoRecompra = diffRecompra <= 0
 
-    return (
+      return (
         <div style={{
-        background: '#0a0a0a',
-        border: `1px solid ${enGanancia ? '#00e5a033' : cerca ? '#f0b42933' : '#ff4d4d33'}`,
-        borderRadius: '10px', padding: '0.8rem 1rem', marginBottom: '0.8rem'
+          background: '#0a0a0a',
+          border: `1px solid ${proximoVenta ? '#00e5a033' : proximoRecompra ? '#4d79ff33' : '#f0b42933'}`,
+          borderRadius: '10px', padding: '0.8rem 1rem', marginBottom: '0.8rem'
         }}>
-        <div style={{ color: '#aaa', fontSize: '0.85rem', marginBottom: '0.4rem' }}>
-            Estado respecto a tu entrada
-        </div>
+          <div style={{ color: '#aaa', fontSize: '0.85rem', marginBottom: '0.4rem' }}>
+            Estado del escalón activo
+          </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem', marginBottom: '0.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem', marginBottom: '0.5rem' }}>
             <div>
-            <div style={{ color: '#f0b429', fontSize: '0.7rem' }}>Tu entrada</div>
-            <div style={{ color: '#ccc', fontWeight: 600, fontSize: '0.85rem' }}>${precioEntrada.toLocaleString()}</div>
-            </div>
-            <div>
-            <div style={{ color: '#f0b429', fontSize: '0.7rem' }}>Precio actual</div>
-            <div style={{ color: '#ccc', fontWeight: 600, fontSize: '0.85rem' }}>${precioActual.toFixed(0).toLocaleString()}</div>
+              <div style={{ color: '#f0b429', fontSize: '0.7rem' }}>Último paso</div>
+              <div style={{ color: '#ccc', fontWeight: 600, fontSize: '0.85rem' }}>{referenciaLabel}</div>
             </div>
             <div>
-            <div style={{ color: '#f0b429', fontSize: '0.7rem' }}>Diferencia</div>
-            <div style={{ color: enGanancia ? '#00e5a0' : '#ff4d4d', fontWeight: 700, fontSize: '0.85rem' }}>
-                {enGanancia ? '+' : ''}{diff.toFixed(0)} ({diffPct}%)
+              <div style={{ color: '#f0b429', fontSize: '0.7rem' }}>Próxima venta</div>
+              <div style={{ color: '#00e5a0', fontWeight: 600, fontSize: '0.85rem' }}>${precioObjetivoVenta.toLocaleString()}</div>
             </div>
+            <div>
+              <div style={{ color: '#f0b429', fontSize: '0.7rem' }}>Próxima recompra</div>
+              <div style={{ color: '#4d79ff', fontWeight: 600, fontSize: '0.85rem' }}>${precioObjetivoRecompra.toLocaleString()}</div>
             </div>
-        </div>
+          </div>
 
-        {/* Mensaje de recomendación */}
-        <div style={{
-            background: enGanancia ? '#00e5a011' : cerca ? '#f0b42911' : '#ff4d4d11',
+          <div style={{
+            background: proximoVenta ? '#00e5a011' : proximoRecompra ? '#4d79ff11' : '#f0b42911',
             borderRadius: '6px', padding: '0.5rem 0.7rem',
-            color: enGanancia ? '#00e5a0' : cerca ? '#f0b429' : '#ff8080',
+            color: proximoVenta ? '#00e5a0' : proximoRecompra ? '#4d79ff' : '#f0b429',
             fontSize: '0.80rem', lineHeight: 1.4, fontStyle: 'italic'
-        }}>
-            {enGanancia
-            ? `✅ Estás en ganancia latente. Podés ejecutar ventas con beneficio real.`
-            : cerca
-            ? `⚠️ Cerca de tu entrada. Esperá que supere $${precioEntrada.toLocaleString()} antes de vender.`
-            : `🔴 Precio por debajo de tu entrada ($${Math.abs(diff).toFixed(0)} abajo). No conviene operar hasta que ETH se recupere a $${precioEntrada.toLocaleString()}.`
+          }}>
+            {proximoVenta
+              ? `✅ El siguiente escalón de venta es $${precioObjetivoVenta.toLocaleString()}. Si el precio llega allí, se activa la siguiente venta del 25%.`
+              : proximoRecompra
+                ? `✅ El siguiente escalón de recompra es $${precioObjetivoRecompra.toLocaleString()}. Si baja a ese nivel, se activa la compra del 25% con USD disponible.`
+                : `⚠️ El mercado está entre escalones. El siguiente objetivo de venta es $${precioObjetivoVenta.toLocaleString()} y el de recompra $${precioObjetivoRecompra.toLocaleString()}.`
             }
+          </div>
         </div>
-        </div>
-    )
+      )
     })()}
 
       {/* Distancia a objetivos */}
@@ -337,6 +350,9 @@ export default function MarketContext({ simbolo, precioActual, precioEntrada, in
           Con tu capital actual operás ≈{' '}
           <span style={{ color: '#ccc', fontWeight: 600 }}>${montoOperar} USDT</span>
           {' '}({porcentaje}%)
+          <div style={{ color: '#aaa', marginTop: '0.25rem' }}>
+            Comisión estimada {comisionActual}% en {plataforma} · neto ≈ ${montoNetoEstimado?.toFixed(2)} USDT
+          </div>
         </div>
       )}
     </div>

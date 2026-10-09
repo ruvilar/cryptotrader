@@ -25,6 +25,87 @@ export function calcularMontoOperacion(capitalTotal, porcentaje) {
   return redondear(capitalTotal * (porcentaje / 100))
 }
 
+export function aplicarComision(monto, comisionPct = 1) {
+  if (!monto || monto <= 0) return 0
+  return redondear(monto * (1 - (comisionPct / 100)))
+}
+
+export function calcularMontoNetoConComision({ montoBruto, comisionPct = 1 }) {
+  if (!montoBruto || montoBruto <= 0) return 0
+  const descuento = redondear((montoBruto * comisionPct) / 100)
+  return redondear(montoBruto - descuento)
+}
+
+// =============================================
+// 3. VALOR ACTUAL DEL ACTIVO Y RESERVA USD
+// Usa el valor vigente del activo y la reserva disponible
+// para evitar calcular sobre un capital estático
+// =============================================
+export function calcularSaldoTokens(operaciones = []) {
+  if (!operaciones?.length) return 0
+
+  const totalCompras = operaciones
+    .filter(op => op.tipo === 'recompra')
+    .reduce((acc, op) => acc + Number(op.tokens || 0), 0)
+
+  const totalVentas = operaciones
+    .filter(op => op.tipo === 'venta')
+    .reduce((acc, op) => acc + Number(op.tokens || 0), 0)
+
+  return redondear8(totalCompras - totalVentas)
+}
+
+export function calcularReservaUsd(operaciones = []) {
+  if (!operaciones?.length) return 0
+
+  const totalVentas = operaciones
+    .filter(op => op.tipo === 'venta')
+    .reduce((acc, op) => acc + Number(op.monto_usdt || 0), 0)
+
+  const totalRecompras = operaciones
+    .filter(op => op.tipo === 'recompra')
+    .reduce((acc, op) => acc + Number(op.monto_usdt || 0), 0)
+
+  return redondear(totalVentas - totalRecompras)
+}
+
+export function calcularValorActivoActual({ tokens, precioActual }) {
+  if (!precioActual || precioActual <= 0) return 0
+  return redondear((tokens || 0) * precioActual)
+}
+
+export function calcularEstadoEstrategia({
+  operaciones = [],
+  precioActual = 0,
+  capitalActual = 0,
+  porcentaje = 25
+}) {
+  const saldoTokens = operaciones.length
+    ? calcularSaldoTokens(operaciones)
+    : (capitalActual && precioActual ? redondear8(capitalActual / precioActual) : 0)
+
+  const valorActivo = operaciones.length
+    ? calcularValorActivoActual({ tokens: saldoTokens, precioActual })
+    : (capitalActual || 0)
+
+  const reservaUsd = operaciones.length ? calcularReservaUsd(operaciones) : 0
+  const valorTotal = redondear(valorActivo + reservaUsd)
+  const montoVenta = redondear(valorActivo * (porcentaje / 100))
+  const montoRecompra = redondear(reservaUsd * (porcentaje / 100))
+  const tokensVenta = precioActual ? redondear8(montoVenta / precioActual) : 0
+  const tokensCompra = precioActual ? redondear8(montoRecompra / precioActual) : 0
+
+  return {
+    saldoTokens,
+    valorActivo,
+    reservaUsd,
+    valorTotal,
+    montoVenta,
+    montoRecompra,
+    tokensVenta,
+    tokensCompra
+  }
+}
 
 // =============================================
 // 3. TOKENS A OPERAR

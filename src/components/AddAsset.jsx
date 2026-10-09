@@ -9,18 +9,35 @@ const ACTIVOS_DISPONIBLES = [
   { simbolo: 'XRPUSDT', nombre: 'XRP' },
 ]
 
+const COMISIONES_PLATAFORMA = {
+  Hapi: 1,
+  Binance: 0.1,
+  Kraken: 0.16
+}
+
 export default function AddAsset({ userId, onActivoAgregado }) {
   const [abierto, setAbierto]           = useState(false)
   const [simbolo, setSimbolo]           = useState('ETHUSDT')
-  const [capitalInicial, setCapital]    = useState('')
-  const [porcentaje, setPorcentaje]     = useState(25)
+  const [cantidadActivo, setCantidad]   = useState('')
   const [precioEntrada, setPrecioEntrada] = useState('')
+  const [plataforma, setPlataforma]     = useState('Hapi')
+  const [porcentaje, setPorcentaje]     = useState(25)
   const [guardando, setGuardando]       = useState(false)
   const [error, setError]               = useState(null)
 
+  const valorEquivalente = cantidadActivo && precioEntrada
+    ? parseFloat(cantidadActivo) * parseFloat(precioEntrada)
+    : 0
+  const comisionActual = COMISIONES_PLATAFORMA[plataforma] || 1
+
   async function handleAgregar() {
-    if (!capitalInicial || parseFloat(capitalInicial) <= 0) {
-      setError('Ingresá un capital inicial válido')
+    if (!cantidadActivo || parseFloat(cantidadActivo) <= 0) {
+      setError('Ingresá una cantidad válida del activo')
+      return
+    }
+
+    if (!precioEntrada || parseFloat(precioEntrada) <= 0) {
+      setError('Ingresá el precio de entrada del activo')
       return
     }
 
@@ -28,7 +45,7 @@ export default function AddAsset({ userId, onActivoAgregado }) {
     setError(null)
 
     const seleccionado = ACTIVOS_DISPONIBLES.find(a => a.simbolo === simbolo)
-    const capital = parseFloat(capitalInicial)
+    const capital = valorEquivalente
 
     const { error: err } = await supabase
       .from('activos')
@@ -51,7 +68,9 @@ export default function AddAsset({ userId, onActivoAgregado }) {
       )
     } else {
       setAbierto(false)
-      setCapital('')
+      setCantidad('')
+      setPrecioEntrada('')
+      setPlataforma('Hapi')
       onActivoAgregado?.()
     }
 
@@ -108,16 +127,16 @@ export default function AddAsset({ userId, onActivoAgregado }) {
         </div>
       </div>
 
-      {/* Capital inicial */}
+      {/* Cantidad del activo */}
       <div style={{ marginBottom: '1rem' }}>
         <label style={{ color: '#555', fontSize: '0.75rem', display: 'block', marginBottom: '0.4rem' }}>
-          Capital inicial (USDT)
+          Cantidad del activo
         </label>
         <input
           type="number"
-          value={capitalInicial}
-          onChange={e => setCapital(e.target.value)}
-          placeholder="Ej: 1180"
+          value={cantidadActivo}
+          onChange={e => setCantidad(e.target.value)}
+          placeholder="Ej: 0.37445494"
           style={{
             width: '100%', padding: '0.7rem 1rem',
             background: '#0a0a0a', border: '1px solid #2a2a2a',
@@ -126,6 +145,66 @@ export default function AddAsset({ userId, onActivoAgregado }) {
           }}
         />
       </div>
+
+      {/* Precio de entrada */}
+      <div style={{ marginBottom: '1rem' }}>
+        <label style={{ color: '#555', fontSize: '0.75rem', display: 'block', marginBottom: '0.4rem' }}>
+          Precio de entrada (USDT por unidad)
+        </label>
+        <input
+          type="number"
+          value={precioEntrada}
+          onChange={e => setPrecioEntrada(e.target.value)}
+          placeholder="Ej: 2500"
+          style={{
+            width: '100%', padding: '0.7rem 1rem',
+            background: '#0a0a0a', border: '1px solid #2a2a2a',
+            borderRadius: '8px', color: '#fff', fontSize: '1rem',
+            outline: 'none', boxSizing: 'border-box'
+          }}
+        />
+      </div>
+
+      <div style={{ marginBottom: '1rem' }}>
+        <label style={{ color: '#555', fontSize: '0.75rem', display: 'block', marginBottom: '0.4rem' }}>
+          Plataforma de operación
+        </label>
+        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+          {Object.keys(COMISIONES_PLATAFORMA).map(p => (
+            <button
+              key={p}
+              onClick={() => setPlataforma(p)}
+              style={{
+                padding: '0.4rem 0.8rem', borderRadius: '8px',
+                background: plataforma === p ? '#0d1f17' : '#1a1a1a',
+                border: `1px solid ${plataforma === p ? '#00e5a0' : '#2a2a2a'}`,
+                color: plataforma === p ? '#00e5a0' : '#555',
+                cursor: 'pointer', fontSize: '0.8rem'
+              }}
+            >
+              {p} · {COMISIONES_PLATAFORMA[p]}%
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {valorEquivalente > 0 && (
+        <div style={{
+          background: '#0d1f17', border: '1px solid #00e5a0',
+          borderRadius: '10px', padding: '0.8rem 1rem', marginBottom: '1rem'
+        }}>
+          <div style={{ color: '#aaa', fontSize: '0.7rem', marginBottom: '0.2rem' }}>Valor inicial equivalente</div>
+          <div style={{ color: '#00e5a0', fontWeight: 700, fontSize: '1rem' }}>
+            ${valorEquivalente.toFixed(2)} USD
+          </div>
+          <div style={{ color: '#f0b429', fontSize: '0.72rem', marginTop: '0.2rem' }}>
+            {parseFloat(cantidadActivo).toFixed(6)} {simbolo.replace('USDT', '')} · precio ${parseFloat(precioEntrada).toFixed(2)}
+          </div>
+          <div style={{ color: '#aaa', fontSize: '0.7rem', marginTop: '0.25rem' }}>
+            Comisión estimada en {plataforma}: {comisionActual}%
+          </div>
+        </div>
+      )}
 
       {/* Porcentaje */}
       <div style={{ marginBottom: '1.2rem' }}>
@@ -149,25 +228,6 @@ export default function AddAsset({ userId, onActivoAgregado }) {
             </button>
           ))}
         </div>
-      </div>
-
-      {/* Precio de entrada */}    
-      <div style={{ marginBottom: '1.2rem' }}>
-        <label style={{ color: '#555', fontSize: '0.75rem', display: 'block', marginBottom: '0.4rem' }}>
-          Precio de entrada (al que compraste)
-        </label>
-        <input
-          type="number"
-          value={precioEntrada}
-          onChange={e => setPrecioEntrada(e.target.value)}
-          placeholder="Ej: 2000"
-          style={{
-            width: '100%', padding: '0.7rem 1rem',
-            background: '#0a0a0a', border: '1px solid #2a2a2a',
-            borderRadius: '8px', color: '#fff', fontSize: '1rem',
-            outline: 'none', boxSizing: 'border-box'
-          }}
-        />
       </div>
 
       {error && (
