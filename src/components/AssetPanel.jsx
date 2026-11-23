@@ -1,6 +1,6 @@
 import PriceWidget from './PriceWidget'
 import { calcularPorcentajeRecomendado } from '../lib/calculations'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../lib/supabaseClient'
 import { useState } from 'react'
 
 export default function AssetPanel({ activo, onSeleccionar, seleccionado, onEliminado }) {

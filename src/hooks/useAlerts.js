@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../lib/supabaseClient'
 import { enviarAlertaTelegram } from '../lib/telegram'
 
 export function useAlerts(userId, preciosPorSimbolo) {

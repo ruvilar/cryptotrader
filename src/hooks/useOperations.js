@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../lib/supabaseClient'
 
 export function useOperations(activoId) {
   const [operaciones, setOperaciones] = useState([])

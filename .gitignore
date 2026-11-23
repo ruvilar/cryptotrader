@@ -32,3 +32,6 @@ dist-ssr
 # Supabase
 supabase/.branches
 supabase/.temp
+
+# Archivos de configuración
+prompt.txt

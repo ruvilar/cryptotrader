@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '../hooks/useAuth'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../lib/supabaseClient'
 import AssetPanel from '../components/AssetPanel'
 import OperationForm from '../components/OperationForm'
 import History from '../components/History'

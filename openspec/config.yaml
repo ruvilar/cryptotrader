@@ -5,9 +5,36 @@ schema: spec-driven
 # Include constraints an agent cannot infer by reading the code.
 # Keep general project documentation and discoverable codebase facts out.
 # Example:
-#   context: |
-#     Designs and tasks must cover Windows, macOS, and Linux
-#     Write all artifacts in Spanish
+context: |
+  PROYECTO: CryptoTrader. Aplicación web personal de apoyo a una estrategia de
+  trading de ETH y BTC, basada en ciclos de venta y recompra fraccionada, con
+  capitalización manual (el usuario decide cuándo reinvierte). Soporta pares
+  USDT de Binance de forma dinámica.
+  STACK: React + Vite, Supabase (base de datos), Google Auth, despliegue en Vercel.
+  ESTRUCTURA: src/components, src/hooks, src/lib (calculations.js, supabase.js,
+  telegram.js), src/pages (App, Dashboard, Landing). El proyecto ya está en
+  producción y tiene avances: es un proyecto existente, no uno nuevo.
+
+  REGLAS DE EVIDENCIA (muy importantes):
+  - Basate solo en lo que leas en el código. Antes de afirmar qué hace un
+    archivo, abrilo y leelo. No deduzcas funciones a partir del nombre.
+  - No asumas funciones que no estén en el código. No des por existentes
+    staking, swaps, APY/APR u otras funciones si no las encontrás implementadas.
+  - Distinguí siempre tres cosas: HECHO (visto en el código, con archivo y
+    línea), SUPOSICIÓN (inferido, marcado como tal) y NO LEÍDO.
+  - Si no pudiste leer un archivo, decilo. No completes con lo que "debería" hacer.
+  - Una mejora o idea nueva solo se sugiere cuando haya un problema real o una
+    oportunidad concreta. Presentala como sugerencia para que el usuario decida,
+    nunca como algo que ya existe ni como algo ya acordado.
+  - Las fórmulas de la estrategia las define el usuario. Ante la duda, preguntá
+    antes de decir que un cálculo está mal.
+
+  REGLAS DE TRABAJO:
+  - Responder siempre en español.
+  - No modificar archivos ni ejecutar comandos sin autorización explícita.
+  - Hacer una sola pregunta por vez cuando algo no esté claro.
+  - No agregar dependencias ni refactorizar fuera del alcance del cambio.
+  - Trabajar por zonas pequeñas, porque el contexto disponible es limitado.
 
 # Per-artifact rules (optional)
 # Add custom rules for specific artifacts.

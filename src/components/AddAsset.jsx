@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../lib/supabaseClient'
 
 const ACTIVOS_DISPONIBLES = [
   { simbolo: 'ETHUSDT', nombre: 'Ethereum' },

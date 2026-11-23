@@ -13,7 +13,7 @@ import {
   validarRecompra
 } from '../lib/calculations'
 import { useOperations } from './useOperations'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../lib/supabaseClient'
 
 export function useTrading(activo, userId) {
   const [procesando, setProcesando] = useState(false)

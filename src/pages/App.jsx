@@ -3,6 +3,15 @@ import { useAuth } from '../hooks/useAuth'
 import Landing from './Landing'
 import Dashboard from './Dashboard'
 import Navbar from '../components/Navbar'
+import { lazy, Suspense } from "react";
+import { ContentServiceProvider } from "@/components/Editor/lib/contentService";
+import { MediaServiceProvider } from "@/components/Editor/lib/mediaService";
+import { LinkServiceProvider } from "@/components/Editor/lib/linkService";
+import { MenuServiceProvider } from "@/components/Editor/lib/menuService";
+import { AuthServiceProvider } from "@/components/Editor/lib/authService";
+import { activeServices } from "@/lib/services.config";
+
+const ContentEditor = lazy(() => import("@/components/Editor/ContentEditor"));
 
 export default function App() {
   const { user, loading } = useAuth()
@@ -32,6 +41,19 @@ export default function App() {
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <ContentServiceProvider service={activeServices}>
+        <MediaServiceProvider service={activeServices}>
+          <LinkServiceProvider service={activeServices}>
+            <MenuServiceProvider service={activeServices}>
+              <AuthServiceProvider service={activeServices}>
+                <Suspense fallback={null}>
+                  <ContentEditor showTrigger={import.meta.env.DEV} />
+                </Suspense>
+              </AuthServiceProvider>
+            </MenuServiceProvider>
+          </LinkServiceProvider>
+        </MediaServiceProvider>
+      </ContentServiceProvider>
     </>
   )
 }

@@ -1,0 +1,426 @@
+/* ===== EDITOR DE CONTENIDOS - ESTILOS PORTABLES ===== */
+
+/* Configuración base del editor */
+.ProseMirror-focused {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Estilos comunes */
+.editor-content,
+.editor-rendered-content,
+.ProseMirror {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+.editor-rendered-content {
+  max-width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.editor-rendered-content > * {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* ===== TIPOGRAFÍA ===== */
+.editor-content h1,
+.editor-rendered-content h1 { 
+  font-size: 2.5rem; 
+  font-weight: bold; 
+  margin: 2rem 0 1rem; 
+  line-height: 1; 
+}
+
+.editor-content h2,
+.editor-rendered-content h2 { 
+  font-size: 2rem; 
+  font-weight: bold; 
+  margin: 2rem 0 1rem; 
+  line-height: 1; 
+}
+
+.editor-content h3,
+.editor-rendered-content h3 { 
+  font-size: 1.5rem; 
+  font-weight: bold; 
+  margin: 2rem 0 1rem; 
+  line-height: 1; 
+}
+
+.editor-content h4,
+.editor-rendered-content h4 { 
+  font-size: 1.25rem; 
+  font-weight: bold; 
+  margin: 2rem 0 1rem; 
+  line-height: 1; 
+}
+
+.editor-content h5,
+.editor-rendered-content h5 { 
+  font-size: 1.1rem; 
+  font-weight: bold; 
+  margin: 2rem 0 1rem; 
+  line-height: 1; 
+}
+
+.editor-content h6,
+.editor-rendered-content h6 { 
+  font-size: 1rem; 
+  font-weight: bold; 
+  margin: 2rem 0 1rem; 
+  line-height: 1; 
+}
+
+.editor-content p,
+.editor-rendered-content p { 
+  margin: 0.5rem 0; 
+  line-height: 1.6; 
+}
+
+/* ===== BLOCKQUOTES ===== */
+.editor-content blockquote,
+.editor-rendered-content blockquote {
+  border-left: 4px solid #3b82f6;
+  margin: 1em 0;
+  padding: 0.5em 1em;
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+/* ===== LISTAS ===== */
+.editor-content ul,
+.editor-rendered-content ul {
+  list-style-type: disc;
+  margin-left: 2em;
+  padding-left: 1em;
+}
+
+.editor-content ol,
+.editor-rendered-content ol {
+  list-style-type: decimal;
+  margin-left: 2em;
+  padding-left: 1em;
+}
+
+.editor-content li,
+.editor-rendered-content li {
+  margin-bottom: 0.3em;
+}
+
+/* ===== ENLACES ===== */
+.editor-content a:not([data-gradient-button]),
+.editor-rendered-content a:not([data-gradient-button]) {
+  font-weight: bold;
+  cursor: text;
+}
+
+body.ctrl-pressed, 
+.editor-content a:not([data-gradient-button]):hover,
+.editor-rendered-content a:not([data-gradient-button]):hover {
+  cursor: pointer;
+}
+
+/* ===== IMÁGENES ===== */
+.editor-content img,
+.editor-rendered-content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+/* ===== TABLAS ===== */
+.ProseMirror table,
+.editor-content .editor-table,
+.editor-rendered-content .editor-table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+  max-width: 100%;
+  margin: 1rem 0;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  overflow: hidden;
+  word-wrap: break-word;
+  animation: tableAppear 0.3s ease-out;
+}
+
+.ProseMirror table td,
+.ProseMirror table th,
+.editor-content .editor-table td,
+.editor-content .editor-table th,
+.editor-rendered-content .editor-table td,
+.editor-rendered-content .editor-table th {
+  min-width: 50px;
+  border: 1px solid #d1d5db;
+  padding: 8px 12px;
+  vertical-align: top;
+  background-color: #ffffff;
+  box-sizing: border-box;
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+
+.ProseMirror table th,
+.editor-content .editor-table th,
+.editor-rendered-content .editor-table th {
+  font-weight: bold;
+  text-align: left;
+  background-color: #f3f4f6;
+  border-bottom: 2px solid #9ca3af;
+}
+
+.ProseMirror table td:hover,
+.ProseMirror table th:hover,
+.editor-content .editor-table td:hover,
+.editor-content .editor-table th:hover,
+.editor-rendered-content .editor-table td:hover,
+.editor-rendered-content .editor-table th:hover {
+  background-color: #f9fafb;
+}
+
+.editor-content .editor-table .selectedCell:after,
+.editor-rendered-content .editor-table .selectedCell:after {
+  z-index: 2;
+  position: absolute;
+  content: "";
+  left: 0; right: 0; top: 0; bottom: 0;
+  background: rgba(59, 130, 246, 0.2);
+  pointer-events: none;
+}
+
+.editor-content .editor-table td:empty::before,
+.editor-content .editor-table th:empty::before,
+.editor-rendered-content .editor-table td:empty::before,
+.editor-rendered-content .editor-table th:empty::before {
+  content: "";
+  display: inline-block;
+  width: 1px;
+  height: 1em;
+}
+
+.editor-content .editor-table .tableHeader,
+.editor-rendered-content .editor-table .tableHeader {
+  background-color: #f8fafc;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 2px solid #6366f1;
+}
+
+.editor-content .editor-table .column-resize-handle,
+.editor-rendered-content .editor-table .column-resize-handle {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  z-index: 20;
+  background-color: #3b82f6;
+  pointer-events: none;
+}
+
+.editor-content .editor-table.resize-cursor,
+.editor-rendered-content .editor-table.resize-cursor {
+  cursor: ew-resize;
+  cursor: col-resize;
+}
+
+.editor-content .ProseMirror-selectednode .editor-table,
+.editor-rendered-content .ProseMirror-selectednode .editor-table {
+  outline: 2px solid #3b82f6;
+  outline-offset: 1px;
+}
+
+.editor-content .editor-table td[style*="background-color"],
+.editor-content .editor-table th[style*="background-color"],
+.editor-rendered-content .editor-table td[style*="background-color"],
+.editor-rendered-content .editor-table th[style*="background-color"] {
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+@keyframes tableAppear {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== BOTONES DE GRADIENTE ===== */
+.ProseMirror button[data-gradient-button],
+.ProseMirror a[data-gradient-button],
+.editor-content button[data-gradient-button],
+.editor-content a[data-gradient-button],
+.editor-rendered-content button[data-gradient-button],
+.editor-rendered-content a[data-gradient-button] {
+  pointer-events: auto;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  z-index: 10;
+  text-decoration: none;
+}
+
+.ProseMirror a[data-gradient-button][data-variant="blue"],
+.ProseMirror a[data-gradient-button][data-variant="gray"],
+.ProseMirror a[data-gradient-button][data-variant="brown"],
+.ProseMirror a[data-gradient-button][data-variant="orange"],
+.ProseMirror a[data-gradient-button][data-variant="green"],
+.editor-content a[data-gradient-button][data-variant="blue"],
+.editor-content a[data-gradient-button][data-variant="gray"],
+.editor-content a[data-gradient-button][data-variant="brown"],
+.editor-content a[data-gradient-button][data-variant="orange"],
+.editor-content a[data-gradient-button][data-variant="green"],
+.editor-rendered-content a[data-gradient-button][data-variant="blue"],
+.editor-rendered-content a[data-gradient-button][data-variant="gray"],
+.editor-rendered-content a[data-gradient-button][data-variant="brown"],
+.editor-rendered-content a[data-gradient-button][data-variant="orange"],
+.editor-rendered-content a[data-gradient-button][data-variant="green"] {
+  color: #ffffff;
+}
+
+.ProseMirror a[data-gradient-button]:hover,
+.editor-content button[data-gradient-button]:hover,
+.editor-content a[data-gradient-button]:hover,
+.editor-rendered-content button[data-gradient-button]:hover,
+.editor-rendered-content a[data-gradient-button]:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.ProseMirror button[data-gradient-button].ProseMirror-selectednode,
+.ProseMirror a[data-gradient-button].ProseMirror-selectednode {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 0.5rem;
+}
+
+.editor-content button[data-gradient-button][data-href]::after,
+.editor-rendered-content button[data-gradient-button][data-href]::after {
+  content: '🔗';
+  margin-left: 6px;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.ProseMirror button[data-gradient-button] i[data-lucide],
+.ProseMirror a[data-gradient-button] i[data-lucide],
+.editor-content button[data-gradient-button] i[data-lucide],
+.editor-content a[data-gradient-button] i[data-lucide],
+.editor-rendered-content button[data-gradient-button] i[data-lucide],
+.editor-rendered-content a[data-gradient-button] i[data-lucide] {
+  display: inline-block;
+  vertical-align: middle;
+  width: 1rem;
+  height: 1rem;
+  margin-bottom: 0.1rem;
+}
+
+/* ===== MODO OSCURO ===== */
+.dark .editor-content blockquote,
+.dark .editor-rendered-content blockquote {
+  border-left-color: #6366f1;
+  background: #1f2937;
+  color: #e2e8f0;
+}
+
+.dark .editor-content .editor-table,
+.dark .editor-rendered-content .editor-table,
+.dark .ProseMirror table {
+  border-color: #374151;
+}
+
+.dark .editor-content .editor-table td,
+.dark .editor-content .editor-table th,
+.dark .editor-rendered-content .editor-table td,
+.dark .editor-rendered-content .editor-table th,
+.dark .ProseMirror table td,
+.dark .ProseMirror table th {
+  border-color: #4b5563;
+  background-color: #1f2937;
+  color: #f9fafb;
+}
+
+.dark .editor-content .editor-table th,
+.dark .editor-rendered-content .editor-table th,
+.dark .ProseMirror table th {
+  background-color: #111827;
+  border-bottom-color: #6366f1;
+}
+
+.dark .editor-content .editor-table td:hover,
+.dark .editor-content .editor-table th:hover,
+.dark .editor-rendered-content .editor-table td:hover,
+.dark .editor-rendered-content .editor-table th:hover,
+.dark .ProseMirror table td:hover,
+.dark .ProseMirror table th:hover {
+  background-color: #374151;
+}
+
+.dark .editor-content .editor-table .tableHeader,
+.dark .editor-rendered-content .editor-table .tableHeader {
+  background-color: #0f172a;
+  color: #e2e8f0;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .editor-rendered-content h1,
+  .editor-content h1 {
+    font-size: 1.875rem;
+  }
+  
+  .editor-rendered-content h2,
+  .editor-content h2 {
+    font-size: 1.5rem;
+  }
+  
+  .editor-rendered-content h3,
+  .editor-content h3 {
+    font-size: 1.25rem;
+  }
+
+  .editor-rendered-content {
+    padding: 0.75rem;
+  }
+
+  .editor-rendered-content button[data-gradient-button],
+  .editor-rendered-content a[data-gradient-button] {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    max-width: 100%;
+    word-wrap: break-word;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .editor-content .editor-table,
+  .editor-rendered-content .editor-table {
+    font-size: 14px;
+  }
+  
+  .editor-content .editor-table td,
+  .editor-content .editor-table th,
+  .editor-rendered-content .editor-table td,
+  .editor-rendered-content .editor-table th {
+    padding: 6px 8px;
+  }
+}
+
+@media (max-width: 1024px) and (min-width: 769px) {
+  .editor-rendered-content h1 {
+    font-size: 2.25rem;
+  }
+  
+  .editor-rendered-content {
+    padding: 1rem;
+  }
+}
