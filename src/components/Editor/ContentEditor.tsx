@@ -254,7 +254,7 @@ export default function ContentEditor({ showTrigger = false }: ContentEditorProp
         {showTrigger && (
           <DialogTrigger asChild>
             <Button 
-              className="shadow-lg hover:shadow-xl transition-shadow"
+              className="text-md bg-orange-500 shadow-lg hover:shadow-xl transition-shadow"
               onClick={() => {
                 if (!isAuthenticated) {
                   setShowLoginModal(true);
@@ -295,14 +295,14 @@ export default function ContentEditor({ showTrigger = false }: ContentEditorProp
           >
             <DialogHeader className="pb-0">
               <div className="flex items-center justify-between mb-4">
-                <DialogTitle className="text-xl font-semibold">
+                <DialogTitle className="text-xl text-yellow-800 font-bold">
                   {(editingContent || formData.id) ? (
                     <>
                       <span className="text-gray-500">Editando: </span>
                       <span className="text-yellow-800 font-bold">{formData.title || editingContent?.title}</span>
                     </>
                   ) : (
-                    "Gestor de Contenidos"
+                    "Editor de Contenidos"
                   )}
                 </DialogTitle>
                 <div className="mr-10 flex items-center gap-4">
@@ -313,29 +313,29 @@ export default function ContentEditor({ showTrigger = false }: ContentEditorProp
                   )}
                   <Button 
                     onClick={signOut} 
-                    className="bg-red-600 hover:bg-red-500 text-white px-3 py-1 text-sm"
+                    className="bg-red-700 hover:bg-red-500 text-white px-3 py-1 text-sm"
                   >
-                    🚪 Cerrar Sesión
+                    Cerrar Sesión
                   </Button>
                 </div>
               </div>
               {/* Pestañas del editor */}
               <div className="flex border-b border-gray-600">
                 <button onClick={() => setActiveTab("create")}
-                  className={`px-6 py-3 font-medium transition-colors shadow-bitcoin ${activeTab === "create" ? "text-yellow-200 border-b-2 border-blue-400 bg-blue-600/20" : "text-gray-700 hover:text-white hover:bg-white/10"}`}>
+                  className={`px-6 py-3 font-medium transition-colors shadow-bitcoin ${activeTab === "create" ? "text-yellow-800 border-b-2 border-blue-400 bg-blue-600/20" : "text-gray-700 hover:text-gray-600 hover:bg-white/10"}`}>
                   {(editingContent || formData.id) ? "📝 Editar Contenido" : "➕ Crear Nuevo Contenido"}
                 </button>
                 <button onClick={() => setActiveTab("list")}
-                  className={`px-6 py-3 font-medium transition-colors ${activeTab === "list" ? "text-yellow-200 border-b-2 border-blue-400 bg-blue-600/20" : "text-gray-700 hover:text-white hover:bg-white/10"}`}>
+                  className={`px-6 py-3 font-medium transition-colors ${activeTab === "list" ? "text-yellow-800 border-b-2 border-blue-400 bg-blue-600/20" : "text-gray-700 hover:text-gray-600 hover:bg-white/10"}`}>
                   📋 Ver Publicaciones
                 </button>
                 <button onClick={() => setActiveTab("seo")}
-                  className={`px-6 py-3 font-medium transition-colors ${activeTab === "seo" ? "text-yellow-200 border-b-2 border-blue-400 bg-blue-600/20" : "text-gray-700 hover:text-white hover:bg-white/10"}`}>
+                  className={`px-6 py-3 font-medium transition-colors ${activeTab === "seo" ? "text-yellow-800 border-b-2 border-blue-400 bg-blue-600/20" : "text-gray-700 hover:text-gray-600 hover:bg-white/10"}`}>
                   🔍 SEO y Metadatos
                 </button>
                 <button
                   onClick={() => setActiveTab("structure")}
-                  className={`px-6 py-3 font-medium transition-colors ${activeTab === "structure" ? "text-yellow-200 border-b-2 border-blue-400 bg-blue-600/20" : "text-gray-700 hover:text-white hover:bg-white/10"}`}
+                  className={`px-6 py-3 font-medium transition-colors ${activeTab === "structure" ? "text-yellow-800 border-b-2 border-blue-400 bg-blue-600/20" : "text-gray-700 hover:text-gray-600 hover:bg-white/10"}`}
                 >
                   🧭 Estructura del Sitio
                 </button>

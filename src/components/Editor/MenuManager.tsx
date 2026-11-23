@@ -332,14 +332,14 @@ export default function MenuManager() {
       <CardHeader>
         <div className="flex flex-col gap-2">
           <div className="flex justify-between items-center">
-            <h2 className="text-xl font-bold text-blue-900">Gestor de Menús</h2>
+            <h2 className="text-xl font-bold text-blue-400">Gestor de Menús</h2>
           </div>
 
           <p className="text-sm text-muted-foreground font-bold">Crea, edita y organiza los menús de tu web o app</p>
 
           <div className="flex items-center gap-3 mt-2 flex-wrap">
             <Select value={menuGroup} onValueChange={(val: any) => setMenuGroup(val)}>
-              <SelectTrigger className="w-[200px]">
+              <SelectTrigger className="shadow-lg shadow-gray-700 w-[200px]">
                 <SelectValue placeholder="Seleccionar grupo" />
               </SelectTrigger>
               <SelectContent>
@@ -351,17 +351,17 @@ export default function MenuManager() {
             </Select>
 
             <div className="flex gap-2">
-              <Button size="sm" variant="default" onClick={handleAddCustom}>
+              <Button className="shadow-lg shadow-gray-700" size="sm" variant="default" onClick={handleAddCustom}>
                 <Plus className="w-4 h-4 mr-1" /> Enlace personalizado
               </Button>
-              <Button size="sm" variant="outline" onClick={handleAddCategory}>
+              <Button className="shadow-lg shadow-gray-700" size="sm" variant="outline" onClick={handleAddCategory}>
                 <Plus className="w-4 h-4 mr-1" /> Desde categoría
               </Button>
             </div>
 
             <Separator orientation="vertical" className="h-8" />
 
-            <Button size="sm" variant="outline" onClick={syncMenuWithCategories}>
+            <Button className="shadow-lg shadow-gray-700" size="sm" variant="outline" onClick={syncMenuWithCategories}>
               <RefreshCw className="w-4 h-4 mr-1" /> Sincronizar
             </Button>
           </div>
@@ -436,7 +436,7 @@ export default function MenuManager() {
                             {...prov.draggableProps}
                             {...prov.dragHandleProps}
                             className={`
-                              flex items-center justify-between border rounded-md px-3 py-2 mb-2 
+                              flex items-center justify-between border shadow-md shadow-gray-700 rounded-md px-3 py-2 mb-2 
                               bg-card transition-all hover:bg-muted/40
                               ${snapshot.isDragging ? "border-l-4 border-l-blue-500" : ""}
                             `}
@@ -465,13 +465,13 @@ export default function MenuManager() {
                                 onChange={(e) => {
                                   if (e.target.value) {
                                     handleDemoteToChild(item.id!, e.target.value)
-                                    e.target.value = "" // Reset
+                                    e.target.value = ""
                                   }
                                 }}
-                                className="text-xs p-1 border rounded bg-gray-500 hover:bg-gray-600 max-w-[225px]"
+                                className="text-sm p-1 border rounded bg-gray-500 hover:bg-gray-600 max-w-[225px]"
                                 defaultValue=""
                               >
-                                <option value="" disabled>↘️ Convertir a subelemento de...</option>
+                                <option value="" disabled>↘️ Convertir a subelemento</option>
                                 {roots.filter(r => r.id !== item.id).map(r => (
                                   <option key={r.id} value={r.id}>
                                     {r.title}
@@ -536,7 +536,7 @@ export default function MenuManager() {
                                     {...prov.draggableProps}
                                     {...prov.dragHandleProps}
                                     className={`
-                                      flex items-center justify-between border rounded-md px-3 py-2 mb-2 
+                                      flex items-center justify-between border shadow-md shadow-gray-700 rounded-md px-3 py-2 mb-2 
                                       border-yellow-200 transition-all
                                       ${snapshot.isDragging ? "border-l-4 border-l-yellow-500" : ""}
                                     `}

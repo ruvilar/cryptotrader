@@ -7,7 +7,7 @@ export default function Navbar() {
     <nav style={{
       display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       padding: '0 2rem', height: '60px', background: '#0f0f0f',
-      borderBottom: '1px solid #222', position: 'sticky', top: 0, zIndex: 100
+      borderBottom: '1px solid #222', position: 'sticky', top: 0, zIndex: 10
     }}>
       <span style={{ color: '#00e5a0', fontWeight: 700, fontSize: '1.1rem', letterSpacing: '0.05em' }}>
         ₿ CryptoTrader

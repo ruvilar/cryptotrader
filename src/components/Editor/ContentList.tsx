@@ -158,14 +158,14 @@ const ContentList: React.FC<Props> = ({
       ) : (
         <div className="space-y-3">
           {/* Contenedor de filtros */}
-          <div className="bg-gray-800/50 rounded-lg p-4 mb-6 border border-gray-600">
+          <div className="bg-gray-700 rounded-lg p-4 mb-6 border border-gray-600">
             <h4 className="text-white font-semibold mb-3 flex items-center gap-2">
               🔍 Filtros de búsqueda
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Filtro por tipo de contenido */}
               <div>
-                <label className="block text-sm text-gray-300 mb-1">Tipo</label>
+                <label className="block font-medium text-sm text-gray-300 mb-1">Tipo</label>
                 <select
                   value={typeFilter}
                   onChange={(e) => {
@@ -184,7 +184,7 @@ const ContentList: React.FC<Props> = ({
 
               {/* Filtro por categoría */}
               <div className={typeFilter === "page" ? "opacity-40 pointer-events-none" : ""}>
-                <label className="block text-sm text-gray-300 mb-1">
+                <label className="block font-medium text-sm text-gray-300 mb-1">
                   Categoría {typeFilter === "page" && <span className="text-xs text-gray-500">(solo artículos)</span>}
                 </label>
                 <select
@@ -204,7 +204,7 @@ const ContentList: React.FC<Props> = ({
 
               {/* Búsqueda por título */}
               <div>
-                <label className="block text-sm text-gray-300 mb-1">Buscar título</label>
+                <label className="block font-medium text-sm text-gray-300 mb-1">Buscar título</label>
                 <input
                   type="text"
                   value={searchTerm}
@@ -216,7 +216,7 @@ const ContentList: React.FC<Props> = ({
 
               {/* Filtro por fechas */}
               <div>
-                <label className="block text-sm text-gray-300 mb-1">Fecha desde</label>
+                <label className="block font-medium text-sm text-gray-300 mb-1">Fecha desde</label>
                 <input
                   type="date"
                   value={dateFilter.from}
@@ -226,7 +226,7 @@ const ContentList: React.FC<Props> = ({
               </div>
 
               <div>
-                <label className="block text-sm text-gray-300 mb-1">Fecha hasta</label>
+                <label className="block font-medium text-sm text-gray-300 mb-1">Fecha hasta</label>
                 <div className="flex gap-1">
                   <input
                     type="date"
@@ -246,7 +246,7 @@ const ContentList: React.FC<Props> = ({
 
               {/* Ordenamiento */}
               <div>
-                <label className="block text-sm text-gray-300 mb-1">Ordenar por</label>
+                <label className="block font-medium text-sm text-gray-300 mb-1">Ordenar por</label>
                 <select
                   value={`${sortBy}-${sortOrder}`}
                   onChange={(e) => {
@@ -268,7 +268,7 @@ const ContentList: React.FC<Props> = ({
 
               {/* Elementos por página */}
               <div>
-                <label className="block text-sm text-gray-300 mb-1">Por página</label>
+                <label className="block font-medium text-sm text-gray-300 mb-1">Por página</label>
                 <select
                   value={itemsPerPage}
                   onChange={(e) => {

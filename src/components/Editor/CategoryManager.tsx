@@ -195,9 +195,9 @@ export default function CategoryManager() {
 
   return (
     <div className="p-4 rounded-lg shadow-inner">
-      <h2 className="text-xl font-bold mb-3 text-blue-800">Gestor de Categorías</h2>
+      <h2 className="text-xl font-bold mb-3 text-blue-400">Gestor de Categorías</h2>
 
-      <div className="flex flex-col md:flex-row gap-2 mb-4 bg-gray-500 p-3 rounded">
+      <div className="flex flex-col md:flex-row gap-2 mb-4 bg-gray-700 p-3 rounded">
         <input
           type="text"
           placeholder="Nombre de la categoría"
@@ -212,7 +212,7 @@ export default function CategoryManager() {
           onChange={(e) => setNewCategory({ ...newCategory, description: e.target.value })}
           className="border text-gray-700 rounded p-2 flex-1"
         />
-        <button type="button" onClick={handleCreate} className="bg-blue-600 text-white px-4 py-2 rounded font-bold">
+        <button type="button" onClick={handleCreate} className="bg-blue-800 hover:bg-blue-600 text-white px-4 py-2 rounded font-bold">
           Crear
         </button>
       </div>
@@ -239,7 +239,7 @@ export default function CategoryManager() {
                         ref={prov.innerRef}
                         {...prov.draggableProps}
                         {...prov.dragHandleProps}
-                        className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gray-300 border rounded p-3 gap-2 shadow-md"
+                        className="flex flex-col sm:flex-row justify-between items-start sm:items-center border border-yellow-300 rounded p-3 gap-2 shadow-md"
                       >
                         <div className="flex-1">
                           {/* Nombre */}
@@ -247,7 +247,7 @@ export default function CategoryManager() {
                             type="text"
                             value={cat.name}
                             onChange={(e) => handleEdit(cat.id!, "name", e.target.value)}
-                            className="font-bold text-yellow-900 border-b focus:border-blue-400 outline-none w-full bg-transparent"
+                            className="font-bold text-yellow-300 border-b focus:border-blue-400 outline-none w-full bg-transparent"
                           />
 
                           {/* Slug editable */}
@@ -255,13 +255,13 @@ export default function CategoryManager() {
                             type="text"
                             value={cat.slug || ""}
                             onChange={(e) => handleEdit(cat.id!, "slug", e.target.value)}
-                            className="text-sm text-gray-700 border-b focus:border-blue-400 outline-none bg-transparent flex-1"
+                            className="text-sm text-gray-950 border-b focus:border-blue-400 outline-none bg-transparent flex-1"
                           />
                             {savedSlugId === cat.id && (
                               <span className="text-green-600 text-xs ml-1">💾 ¡Guardado exitoso!</span>
                             )}
 
-                          <span className="text-xs text-yellow-900 ml-5">
+                          <span className="text-xs ml-5">
                             {(() => {
                               const count = postCounts[cat.slug] ?? postCounts[cat.name] ?? 0;
                               if (count === 0) return "No hay publicaciones";
@@ -278,11 +278,11 @@ export default function CategoryManager() {
                             rows={1}
                             placeholder="Descripción..."
                           />
-                          <p className="text-xs text-blue-600 mt-1">{cat.path}</p>
+                          <p className="text-xs mt-1">{cat.path}</p>
                         </div>
 
                         {/* Estado y acciones */}
-                        <label className="text-gray-900 flex items-center gap-1 text-sm cursor-pointer">
+                        <label className="text-gray-200 font-bold flex items-center gap-1 text-sm cursor-pointer">
                           <input
                             type="checkbox"
                             checked={cat.is_active ?? true}

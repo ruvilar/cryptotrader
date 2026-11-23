@@ -207,7 +207,7 @@ const DesignSection: React.FC<Props> = ({ formData, updateField, onFeaturedImage
               <button
                 type="button"
                 onClick={() => setShowMediaManager(true)}
-                className="flex-1 px-4 py-3 font-bold bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+                className="flex-1 px-4 py-3 font-bold bg-purple-900 hover:bg-purple-700 text-white rounded-lg transition-colors"
               >
                 📚 Biblioteca de medios
               </button>
@@ -227,8 +227,8 @@ const DesignSection: React.FC<Props> = ({ formData, updateField, onFeaturedImage
           <label className="block text-sm font-medium text-gray-800">
             🎨 CSS personalizado (Opcional)
           </label>
-          <p className="text-xs text-gray-600 mb-2">
-            💡 Los estilos solo afectarán a este post. Evita selectores globales.
+          <p className="text-xs text-blue-900 mb-2">
+            💡 Los estilos solo afectarán a esta publicación.
           </p>
 
           <textarea
@@ -251,7 +251,7 @@ const DesignSection: React.FC<Props> = ({ formData, updateField, onFeaturedImage
           )}
           {formData.customCss && !cssError && (
             <div className="p-2 bg-green-100 border border-green-400 rounded text-green-800 text-xs">
-              ✅ CSS válido. Se aplicará solo a este artículo.
+              ✅ CSS válido. Se aplicará solo a esta publicación.
             </div>
           )}
         </div>

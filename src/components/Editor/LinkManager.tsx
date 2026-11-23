@@ -195,7 +195,7 @@ export default function LinkManager() {
       <CardHeader>
         <div className="flex flex-col gap-2">
           <div className="flex justify-between items-center">
-            <h2 className="text-xl font-bold text-blue-900">Gestor de Enlaces y Redirecciones</h2>
+            <h2 className="text-xl font-bold text-blue-400">Gestor de Enlaces y Redirecciones</h2>
           </div>
           <p className="text-sm text-muted-foreground font-bold">
             Administra enlaces personalizados y redirecciones 301/302
@@ -212,18 +212,18 @@ export default function LinkManager() {
         )}
 
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "links" | "redirects")}>
-          <TabsList className="grid w-full grid-cols-2 mb-4">
-            <TabsTrigger value="links">Enlaces Personalizados ({links.length})</TabsTrigger>
-            <TabsTrigger value="redirects">Redirecciones ({redirects.length})</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 mb-5">
+            <TabsTrigger className="shadow-lg shadow-gray-700" value="links">Enlaces Personalizados ({links.length})</TabsTrigger>
+            <TabsTrigger className="shadow-lg shadow-gray-700" value="redirects">Redirecciones ({redirects.length})</TabsTrigger>
           </TabsList>
 
           {/* ==================== TAB: ENLACES PERSONALIZADOS ==================== */}
           <TabsContent value="links" className="space-y-4">
             <div className="flex justify-between items-center">
-              <Button size="sm" variant="default" onClick={() => setShowAddLinkDialog(true)}>
+              <Button className="shadow-lg shadow-gray-700" size="sm" variant="default" onClick={() => setShowAddLinkDialog(true)}>
                 <Plus className="w-4 h-4 mr-1" /> Nuevo Enlace
               </Button>
-              <Button size="sm" variant="outline" onClick={loadLinks} disabled={loading}>
+              <Button className="shadow-lg shadow-gray-700" size="sm" variant="outline" onClick={loadLinks} disabled={loading}>
                 <RefreshCw className={`w-4 h-4 mr-1 ${loading ? "animate-spin" : ""}`} />
                 Recargar
               </Button>
@@ -375,10 +375,10 @@ export default function LinkManager() {
           {/* ==================== TAB: REDIRECCIONES ==================== */}
           <TabsContent value="redirects" className="space-y-4">
             <div className="flex justify-between items-center">
-              <Button size="sm" variant="default" onClick={() => setShowAddRedirectDialog(true)}>
+              <Button className="shadow-lg shadow-gray-700" size="sm" variant="default" onClick={() => setShowAddRedirectDialog(true)}>
                 <Plus className="w-4 h-4 mr-1" /> Nueva Redirección
               </Button>
-              <Button size="sm" variant="outline" onClick={loadRedirects} disabled={loading}>
+              <Button className="shadow-lg shadow-gray-700" size="sm" variant="outline" onClick={loadRedirects} disabled={loading}>
                 <RefreshCw className={`w-4 h-4 mr-1 ${loading ? "animate-spin" : ""}`} />
                 Recargar
               </Button>
